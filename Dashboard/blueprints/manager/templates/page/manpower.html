@@ -1,0 +1,105 @@
+{% extends 'page/base.html' %} {% from 'macros/designs.html' import loader %} {% block app %}
+<div ng-controller="availCtrl" ng-cloak class="container">
+    <div class="row" ng-switch="loading">
+        <div ng-switch-when="true">
+            {{ loader() }}
+        </div>
+        <div ng-switch-default>
+            <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+                <div class="col s3">
+                    <button class="btn amber darken-3 waves-effect waves-light [[ status.editing? 'darken-4' : 'darken-3' ]]"
+                            ng-click="toggleEdit()" ng-disabled="status.sending">
+                        <i class="material-icons right">[[ status.editing ? 'done': 'mode_edit' ]]</i>
+                        [[ status.editing ? 'Done' : 'Edit' ]]
+                    </button>
+                </div>
+                <div ng-show="status.sending" class="col s9 progress">
+                    <div class="indeterminate"></div>
+                </div>
+                <div ng-show="!status.sending && status.send_done" class="col s9">
+                    <div class="alert teal lighten-2 white-text">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true" ng-click="status.send_done = false">&times;</span></button>
+                    Manpower update successful.
+                    </div>
+                </div>
+                <!--<a class="btn teal lighten-1 waves-effect waves-light" href="{{ url_for('home.allocation') }}" ng-disabled="status.editing">-->
+                <!--<i class="material-icons right">send</i>Confirm</a>-->
+            </div>
+            <br>
+            <div class="divider blue darken-1" style="margin: 0 -1rem ; font-size: 3px"></div>
+            <br>
+
+            <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+                <ul class="col s6 collection with-header">
+                    <li class="collection-header">
+                        <h5>Available Drivers: [[ drivers.on.length ]]</h5>
+                    </li>
+                    <li class="collection-item" ng-repeat="d in drivers.on">
+                        <div>[[ d ]]
+                            <a ng-show="status.editing" ng-click="swap($index, 0)" class="secondary-content">
+                                <i class="material-icons cursor-pointer">fast_forward</i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="col s6 collection with-header">
+                    <li class="collection-header">
+                        <h5>Unavailable Drivers: [[ drivers.off.length ]]</h5>
+                    </li>
+                    <li class="collection-item" ng-repeat="d in drivers.off">
+                        <div>[[ d ]]
+                            <a ng-show="status.editing" ng-click="swap($index, 1)" class="secondary-content">
+                                <i class="material-icons cursor-pointer">fast_rewind</i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <!-- <ul class="collection with-header">
+                <li class="collection-header"><h5>Number of Drivers: [[ num_drivers ]]</h5></li>
+                <li class="collection-item" ng-repeat="d in drivers.on">
+                    <div>[[ d ]]
+                        <a ng-show="status.editing" href="#" ng-click="remove(d, $index)"
+                           class="secondary-content">
+                            <i class="material-icons">delete</i>
+                        </a>
+                    </div>
+                </li>
+            </ul> -->
+            </div>
+        </div>
+
+        <!-- <div class="row">
+          <table class="bordered">
+            <thead>
+              <tr>
+                <th width="50%">Working</th>
+                <th width="50%">Sick / Off</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="i in range(num_drivers)">
+                <td id="[[ 'on' + i ]]">
+                  <span ng-if="drivers.on[i]"
+                        id="[[ drivers.on[i] | replaceAll:' ':'-' ]]"
+                        class="drag-event"
+                        draggable="true">
+                      [[ drivers.on[i] ]]
+                  </span>
+                </td>
+                <td id="[[ 'off' + i ]]">
+                  <span ng-if="drivers.off[i]"
+                        id="[[ drivers.off[i] ]]"
+                        class="drag-event"
+                        draggable="true">
+                      [[ drivers.off[i] ]]
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div> -->
+
+    </div>
+</div>
+{% endblock %} {% block scripts %} {{ super() }} {% endblock %}

@@ -1,0 +1,96 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+header, main, footer {
+    padding-left: 300px;
+}
+
+main {
+    padding-top: 1.5rem;
+    flex: 1 0 auto;
+}
+
+@media only screen and (max-width: 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+.footer-nav {
+    padding-top: 2rem;
+    padding-bottom: 1.5rem;
+    font-size: 20px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.fill-parent {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.page-title {
+    line-height: 122px;
+    font-size: 48px;
+}
+
+.top-icon {
+    font-size: 3em !important;
+    padding-right: 1em;
+}
+
+.user-info {
+    padding-left: 32px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* External CSS */
+
+.alert {
+    padding: 8px 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-dismissible {
+    padding-right: 35px;
+}
+
+.fade {
+    opacity: 0;
+    -webkit-transition: opacity .15s linear;
+    -o-transition: opacity .15s linear;
+    transition: opacity .15s linear;
+}
+
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .2;
+}
+
+button.close {
+    -webkit-appearance: none;
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+}
+
+.alert-dismissible .close {
+    position: relative;
+    top: -2px;
+    right: -21px;
+    color: inherit;
+}

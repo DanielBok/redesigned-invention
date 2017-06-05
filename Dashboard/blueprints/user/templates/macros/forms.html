@@ -1,0 +1,58 @@
+{%- macro form_start(endpoint, fid='', css_class='', method='post') -%}
+
+<form action="{{ url_for(endpoint, **kwargs) }}"
+      method="{{ method }}"
+      id="{{ fid }}"
+      class="{{ css_class }}"
+      role="form">
+    {{ form.hidden_tag() }}
+    {{ caller () }}
+    {{ form.csrf_token }}
+</form>
+{%- endmacro -%}
+
+{# Render a form group with errors for various field types. #}
+{%- macro form_group(f, css_class='') -%}
+{% if f.errors %}
+{% set css_class = css_class + ' has-error ' + kwargs.pop('class', '') %}
+{% endif %}
+
+<div class="row">
+    <div class="input-field col s12">
+        {{ field_label(f) }}
+        {{ field(f, **kwargs) }}
+        {{ field_errors(f) }}
+    </div>
+    {{ caller () }}
+</div>
+{%- endmacro -%}
+
+
+{# Render a form field's label with visual aid to see if it's required. #}
+{%- macro field_label(f) -%}
+<label for="{{ f.id }}">
+    {% if f.flags.required %}
+    <strong>{{ f.label.text }}</strong>
+    {% else %}
+    {{ f.label.text }}
+    {% endif %}
+</label>
+{%- endmacro -%}
+
+
+{# Render a form field's errors. #}
+{%- macro field_errors(f) -%}
+{% if f.errors %}
+<ul style="list-style: none">
+    {% for error in f.errors %}
+    <li class="pink-text accent-4">{{ error | e }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{%- endmacro -%}
+
+
+{# Render a form field. #}
+{%- macro field(f, css_class='form-control') -%}
+{{ f(class=css_class, **kwargs) }}
+{%- endmacro -%}

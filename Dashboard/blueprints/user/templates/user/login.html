@@ -1,0 +1,22 @@
+{% extends 'user/base.html' %}
+{% import 'macros/forms.html' as f with context %}
+
+{% block app %}
+<div class="container">
+    <div class="row">
+        {% call f.form_start('user.login', css_class="col s12") %}
+        <legend>Please sign in to continue</legend>
+        {% call f.form_group(form.identity) %}{% endcall %}
+        {% call f.form_group(form.password) %}{% endcall %}
+
+        <div class="row">
+            <button type="submit" class="btn btn-block btn-large">Login</button>
+        </div>
+        {% endcall %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

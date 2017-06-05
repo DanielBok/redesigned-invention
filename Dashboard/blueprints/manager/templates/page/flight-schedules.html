@@ -1,0 +1,57 @@
+{% extends 'page/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
+<div ng-controller="fsCtrl as fs" ng-cloak class="container">
+    <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+        <div ng-switch="fs.loading">
+            <div ng-switch-when="true">
+                {{ loader() }}
+            </div>
+            <div ng-switch-default>
+                <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+                    <button class="col s5 cyan darken-1 waves-effect waves-light btn-large" ng-show="!terminal2"
+                            ng-click="toggleTerminal(0)">Terminal 2
+                    </button>
+                    <button class="col s5 cyan darken-3 waves-effect waves-light btn-large"
+                            ng-show="terminal2">Terminal 2
+                    </button>
+                    <button class="col s5 offset-s1 cyan darken-1 waves-effect waves-light btn-large" ng-show="terminal2"
+                            ng-click="toggleTerminal(1)">Terminal 3
+                    </button>
+                    <button class="col s5 offset-s1 cyan darken-3 waves-effect waves-light btn-large" ng-show="!terminal2">
+                        Terminal 3
+                    </button>
+                </div>
+
+                <br>
+                <table class="striped">
+                    <thead>
+                    <tr>
+                        <th>ETA</th>
+                        <th>ATA</th>
+                        <th>Flight Number</th>
+                        <th>Type</th>
+                        <th>Terminal</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="flight in schedule" ng-if="flight.terminal === t.value">
+                        <td>[[ flight.scheduled_time ]]</td>
+                        <td>[[ flight.actual_time ]]</td>
+                        <td>[[ flight.flight_num ]]</td>
+                        <td>[[ flight.type == 'A' ? 'Arrival' : 'Departure' ]]</td>
+                        <td>[[ flight.terminal ]]</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

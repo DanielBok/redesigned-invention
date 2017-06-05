@@ -1,0 +1,55 @@
+{% extends 'page/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
+<div ng-controller="tbCtrl" ng-cloak class="container">
+    <div ng-switch="loading">
+        <div ng-switch-when="true">
+            {{ loader() }}
+        </div>
+        <div ng-switch-default>
+            <div class="row">
+              <table class="bordered">
+                  <thead>
+                  <tr>
+                      <th>ID</th>
+                      <th>Source</th>
+                      <th>Destination</th>
+                      <th>Ready time</th>
+                      <th>Containers</th>
+                      <th>Driver</th>
+                      <th>Progress</th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <tr ng-repeat="task in tasks">
+                      <td>[[ task.task_id ]]</td>
+                      <td>[[ task.source ]]</td>
+                      <td>[[ task.destination ]]</td>
+                      <td>[[ task.ready_time ]]</td>
+                      <td>[[ task.containers ]]</td>
+                      <td>
+                          <div class="input-field">
+                              <select>
+                                  <option selected>test[[ task.driver ]]</option>
+                                  <option ng-repeat="d in drivers">[[ d.name ]]</option>
+                              </select>
+                          </div>
+                      </td>
+                      <td><i class="material-icons">perm_identity</i><label>unassigned</label></td>
+                      <td><i class="material-icons">warning</i><label>passed</label></td>
+                      <td><i class="material-icons">work</i><label>ongoing</label></td>
+                      <td><i class="material-icons">done</i><label>done</label></td>
+                  </tr>
+                  </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
