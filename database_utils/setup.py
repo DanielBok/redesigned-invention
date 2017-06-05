@@ -13,7 +13,7 @@ from configs.settings import SQLALCHEMY_DATABASE_URI
 from database_utils.extra import ProgressEnumerate
 from utils import now
 
-APP_DATA = abspath(join(dirname(__file__), '..',  'app_data'))
+APP_DATA = abspath(join(dirname(__file__), '..', 'app_data'))
 
 
 def seed(app):
@@ -53,11 +53,11 @@ def seed(app):
 
     names = []
     with open(join(APP_DATA, 'people.txt')) as f:
-        for i, line in enumerate(f):
+        for c, line in enumerate(f):
             name = line.strip().split('\t')[0]
             employees.append({
                 'role': 'driver',
-                'username': 'driver{0:d}'.format(i),
+                'username': 'driver{0:d}'.format(c),
                 'password': 'airport',
                 'name': name
             })
@@ -93,6 +93,11 @@ def seed(app):
 
         nc = e['num_containers']
         if nc > 0:
+
+            _containers = [4 for _ in range(nc // 4)]
+            if nc % 4 != 0:
+                _containers.append(nc % 4)
+
             last_num = 1 + nc // 4
             if nc % 4 == 0:
                 last_num -= 1
@@ -101,13 +106,13 @@ def seed(app):
             rt = st if e['type_'] == 'A' else st - td(minutes=30)
             ct = st + td(minutes=rng.triangular(16, 17, 18))
 
-            for i in range(last_num):
+            for c in _containers:
                 task_data = {
                     'status': 'done' if st <= time else 'ready',
                     'ready_time': rt,
                     'completed_time': ct,
                     'driver': rng.choice(names) if st <= otime else None,
-                    'containers': 4 if i + 1 < last_num else nc % 4,
+                    'containers': c,
                     'source': e['flight_num'] if e['type_'] == 'A' else 'HOTA',
                     'destination': e['flight_num'] if e['type_'] == 'D' else 'HOTA'
                 }
