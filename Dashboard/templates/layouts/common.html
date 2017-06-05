@@ -32,6 +32,10 @@
 <body>
 {% block main %} {% endblock %}
 
+<!-- Common JavaScript File-->
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+
+<!-- External JavasScript Libraries-->
 <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery-2.1.1.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='vendor/materialize/materialize.min.js') }}"></script>
 

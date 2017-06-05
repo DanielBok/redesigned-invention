@@ -1,4 +1,4 @@
-let app = angular.module('mainApp', ['ngTable']);
+let app = angular.module('driverApp', []);
 
 app.config(($interpolateProvider) => {
     $interpolateProvider.startSymbol('[[');

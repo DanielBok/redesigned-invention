@@ -7,7 +7,7 @@
 {% block main %}
 
 {{ design.navbar_main() }}
-<main ng-app="mainApp">
+<main ng-app="driverApp">
     {% block app %} {% endblock %}
 </main>
 {{ design.footer_main() }}
@@ -15,9 +15,8 @@
 
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='apps/main/main.js') }}"></script>
-<script src="{{ url_for('static', filename='apps/main/controllers.js') }}"></script>
-<script src="{{ url_for('static', filename='apps/main/filter.js') }}"></script>
+<script src="{{ url_for('driver.static', filename='main.js') }}"></script>
+<script src="{{ url_for('driver.static', filename='controllers.js') }}"></script>
 
 <script type="text/javascript">
     $(".button-collapse").sideNav();

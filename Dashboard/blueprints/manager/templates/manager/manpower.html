@@ -1,4 +1,7 @@
-{% extends 'page/base.html' %} {% from 'macros/designs.html' import loader %} {% block app %}
+{% extends 'manager/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
 <div ng-controller="availCtrl" ng-cloak class="container">
     <div class="row" ng-switch="loading">
         <div ng-switch-when="true">
@@ -19,8 +22,8 @@
                 <div ng-show="!status.sending && status.send_done" class="col s9">
                     <div class="alert teal lighten-2 white-text">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                            aria-hidden="true" ng-click="status.send_done = false">&times;</span></button>
-                    Manpower update successful.
+                                aria-hidden="true" ng-click="status.send_done = false">&times;</span></button>
+                        Manpower update successful.
                     </div>
                 </div>
                 <!--<a class="btn teal lighten-1 waves-effect waves-light" href="{{ url_for('home.allocation') }}" ng-disabled="status.editing">-->

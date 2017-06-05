@@ -32,7 +32,7 @@ def anonymous_required():
 
 def role_required(*roles):
     """
-    Checks if user has permission to view the page
+    Checks if user has permission to view the driver
     :param *roles: 1 or more allowed roles
     :return: Function
     """
@@ -41,7 +41,7 @@ def role_required(*roles):
         @wraps(f)
         def decorated_func(*args, **kwargs):
             if current_user.role not in roles:
-                flash('You do not have permission for that page. Please login again.', 'error')
+                flash('You do not have permission for that driver. Please login again.', 'error')
                 return _redirect(current_user)
             return f(*args, **kwargs)
 

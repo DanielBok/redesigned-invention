@@ -3,7 +3,10 @@ from flask_login import login_required
 
 from Dashboard.blueprints.user.decorators import role_required
 
-driver = Blueprint('driver', __name__, template_folder='templates')
+driver = Blueprint('driver', __name__,
+                   template_folder='templates',
+                   static_folder='static',
+                   static_url_path='/static')
 
 
 @driver.before_request
@@ -20,4 +23,4 @@ def index():
         'page_title': 'Taskboard',
         'page_color': 'yellow darken-4'
     }
-    return render_template('page/index.html', **payload)
+    return render_template('driver/index.html', **payload)

@@ -1,14 +1,3 @@
-function api(endpoint, query_params = {}) {
-    // let url = `https://stark-basin-83670.herokuapp.com/${endpoint}?`;
-    let url = `${location.protocol}//${location.host}/api/${endpoint}?`;
-    for (let key in query_params) {
-        if (!query_params.hasOwnProperty(key))
-            continue;
-        url += `${key}=${query_params[key]}&`;
-    }
-    return url.substr(0, url.length - 1);
-}
-
 // Controller for allocation
 app.controller("allocCtrl", ($scope, $http) => {
     $scope.loading = true;
@@ -207,43 +196,4 @@ app.controller('tbCtrl', ($scope, $http) => {
     );
 
 
-});
-
-// Controller for driver
-app.controller("driverCtrl", ($scope, $http) => {
-  $scope.loading = true;
-  $scope.ready = false;
-
-  $http.get(api('drivers')).then(
-    (res) => {
-      console.log(res);
-      $scope.loading = false;
-    },
-    (err) => {
-      console.error('error',err);
-      $scope.loading = false;
-    }
-  );
-  $scope.mockData = {
-      Type: 'Arrival',
-      Source: 'SQ123' ,
-      Destination: 'HOTA',
-      Time: '13:37',
-      Containers: ['12345', '67890', '13337'],
-  };
-
-  $scope.done = false;
-
-  $scope.passTask = function () {
-    $scope.done = true;
-  };
-  $scope.completeTask = function () {
-    $scope.done = true;
-  };
-  $scope.refreshTasks = function () {
-    $scope.loading = true;
-    // api call
-    $scope.done = false;
-    $scope.loading = false;
-  };
 });
