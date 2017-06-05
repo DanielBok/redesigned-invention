@@ -85,7 +85,12 @@ def make_csv():
 
 @managers.route('/controller')
 def driver_controller():
-    return render_template()
+    payload = {
+        'title': 'Pronto Dashboard',
+        'page_title': 'Manager Master',
+        'page_color': 'indigo darken-2'
+    }
+    return render_template('manager/driver-controller.html', **payload)
 
 
 @managers.errorhandler(404)

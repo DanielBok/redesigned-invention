@@ -55,15 +55,21 @@ class Tasks(ResourceMixin, db.Model):
             'driver': self.driver
         }
 
-    def unset_task(self):
+    def return_task(self):
         self.status = Choice('ready', 'Ready')
+        return self.save()
+
+    def do_task(self, driver: str):
+        self.driver = driver
+        self.status = Choice('er', 'En-route')
         self.save()
         return self
 
     @classmethod
     def get_first_task(cls) -> 'Tasks':
         return (Tasks.query
-                .filter((Tasks.ready_time <= now() & Tasks.status == Choice('ready', 'Ready')))
+                .filter((Tasks.ready_time <= now()) &
+                        (Tasks.status == Choice('ready', 'Ready')))
                 .order_by(Tasks.ready_time)
                 .first())
 
@@ -150,31 +156,35 @@ class Drivers(ResourceMixin, db.Model):
     def __init__(self, **kwargs):
         super(Drivers, self).__init__(**kwargs)
 
-    def update_activity(self, act_):
-        self.status = act_
-        self.save()
-        return self
-
-    def update_task(self, task_id):
-        self.task_id = task_id
-        self.status = Choice('on', 'On Task')
-        self.save()
-        return self
-
     def pause(self):
         self.status = Choice('break', 'Break')
-        self.save()
-        return self.task_id
+        return self.save()
 
     def ready(self):
         self.status = Choice('ready', 'Ready')
-        self.save()
-        return self
+        return self.save()
+
+    def return_task(self, task_id):
+        task = Tasks.get_task_by_id(task_id)
+        task.driver = None
+        task.return_task()
+
+        self.task_id = None
+        return self.save()
 
     def stop_work(self):
         self.status = Choice('off', 'Off Work')
-        self.save()
-        return self
+        return self.save()
+
+    def update_activity(self, act_):
+        self.status = act_
+        return self.save()
+
+    def work_on(self, task: Tasks):
+        self.task_id = task.id
+        task.do_task(self.name_)
+        self.status = Choice('on', 'On Task')
+        return self.save()
 
     @classmethod
     def get_by_identity(cls, identity: str) -> 'Drivers':
@@ -187,4 +197,4 @@ class Drivers(ResourceMixin, db.Model):
 
     @classmethod
     def get_all_drivers(cls):
-        return [{'name': d.name_, 'status': d.status.value} for d in Drivers.query.all()]
+        return [{'name': d.name_, 'status': d.status.value, 'task_id': d.task_id} for d in Drivers.query.all()]

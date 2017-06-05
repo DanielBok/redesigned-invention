@@ -1,0 +1,42 @@
+{% extends 'manager/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
+<div ng-cloak class="container" ng-controller="managerMasterCtrl">
+    <div ng-switch="loading">
+        <div ng-switch-when="true">
+            {{ loader() }}
+        </div>
+        <div ng-switch-default>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Task ID</th>
+                    <th>Switch</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="d in drivers">
+                    <td>[[ d.name ]]</td>
+                    <td>[[ d.status ]]</td>
+                    <td>[[ d.task_id ]]</td>
+                    <td>
+                        <div class="switch">
+                            <label>
+                                Off
+                                <input type="checkbox" ng-click="update_driver($index)"
+                                       ng-checked="isReadyOrWorking(d.status)">
+                                <span class="lever"></span>
+                                On
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

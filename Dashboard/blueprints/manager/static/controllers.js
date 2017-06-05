@@ -171,15 +171,15 @@ app.controller('tbCtrl', ($scope, $http) => {
     let jq = $.noConflict();
 
     $http.get(api('drivers')).then(
-      (res) => {
-        console.log(res);
-        $scope.drivers = res.data.drivers;
-        $scope.loading = false;
-      },
-      (err) => {
-        console.error('error',err);
-        $scope.loading = false;
-      }
+        (res) => {
+            console.log(res);
+            $scope.drivers = res.data.drivers;
+            $scope.loading = false;
+        },
+        (err) => {
+            console.error('error', err);
+            $scope.loading = false;
+        }
     );
 
     $http.get(api('tasks')).then(
@@ -195,5 +195,46 @@ app.controller('tbCtrl', ($scope, $http) => {
         }
     );
 
+});
+
+// Magic controller for testing purposes
+app.controller('managerMasterCtrl', ($scope, $http) => {
+    $scope.loading = true;
+    $scope.drivers = [];
+    $scope.disabled_ = [];
+
+    $http.get(api('drivers', {type: 'all'})).then(
+        res => {
+            console.log(res);
+            $scope.drivers = res.data.drivers;
+            $scope.drivers.forEach(() => $scope.disabled_.push(false));
+            $scope.loading = false;
+        },
+        err => {
+            console.error('error', err);
+            $scope.loading = false;
+        }
+    );
+
+    $scope.isReadyOrWorking = (text) => {
+        text = text.toLowerCase();
+        return text.startsWith("on") || text.startsWith("ready");
+    };
+
+    $scope.update_driver = (i) => {
+        let driver = $scope.drivers[i];
+        $scope.disabled_[i] = true;
+        driver.activity = $scope.isReadyOrWorking(driver.status) ? 'stop' : 'start';
+
+        $http.post(api('drivers'), driver).then(
+            res => {
+                $scope.disabled_[i] = false;
+                $scope.drivers[i] = res.data.driver;
+            },
+            err => {
+                console.error(err);
+            }
+        );
+    }
 
 });
