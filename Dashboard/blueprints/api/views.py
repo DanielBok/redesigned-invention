@@ -3,13 +3,14 @@ from os.path import abspath, dirname, join
 import pandas as pd
 from flask import Blueprint, request, redirect, jsonify
 from flask_restful import Api, Resource
+from Dashboard.extensions import csrf
 
 from utils import now
 from .models import Drivers, Flights, Tasks
 from .optimizer import fcfs
 
 api_bp = Blueprint('api', __name__)
-api = Api(api_bp)
+api = Api(api_bp, decorators=[csrf.exempt])
 
 
 @api_bp.before_request
@@ -79,11 +80,9 @@ class DriversCtrl(Resource):
             if task_id is not None:
                 Tasks.get_task_by_id(task_id).unset_task()
 
+        task_dict = None
         if activity in {'start', 'complete'}:
             d.ready()
-
-        task_dict = None
-        if d.status == 'ready':
             task = Tasks.get_first_task()
             if task is not None:
                 task.set_driver(d.name_)

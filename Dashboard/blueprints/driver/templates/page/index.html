@@ -2,7 +2,7 @@
 {% from 'macros/designs.html' import loader %}
 
 {% block app %}
-<div ng-controller="driverCtrl" ng-cloak class="container">
+<div ng-controller="driverCtrl" ng-cloak class="container" ng-init="name ='{{ current_user.name }}'">
     <div class="row" style="margin-left:0 !important; margin-right:0 !important">
         <div ng-switch="loading">
             <div ng-switch-when="true">
@@ -13,7 +13,7 @@
                     <div class="switch">
                         <label>
                             Not Ready
-                            <input type="checkbox" ng-model="ready">
+                            <input type="checkbox" ng-click='setReady()'>
                             <span class="lever"></span>
                             Ready
                         </label>
@@ -91,18 +91,10 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $(document).ready(function () {
-        $('.modal').modal();
-    });
-</script>
 {{ super() }}
-<<<<<<< HEAD
 <script>
     $(document).ready(function () {
         $('.modal').modal();
     });
 </script>
-=======
->>>>>>> d84677b7da2671a934d60d65073a7173a44ef758
 {% endblock %}

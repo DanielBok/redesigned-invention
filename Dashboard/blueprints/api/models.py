@@ -63,7 +63,10 @@ class Tasks(ResourceMixin, db.Model):
     @classmethod
     def get_first_task(cls) -> 'Tasks':
         return (Tasks.query
-                .filter((Tasks.ready_time <= now() & Tasks.status == Choice('ready', 'Ready')))
+                .filter(
+                        (Tasks.ready_time <= now()) &
+                        (Tasks.status == Choice('ready', 'Ready'))
+                        )
                 .order_by(Tasks.ready_time)
                 .first())
 

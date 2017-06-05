@@ -213,6 +213,24 @@ app.controller('tbCtrl', ($scope, $http) => {
 app.controller("driverCtrl", ($scope, $http) => {
   $scope.loading = true;
   $scope.ready = false;
+  $scope.name = "";
+
+  $scope.setReady = function() {
+    $scope.ready = !$scope.ready;
+
+    let payload = {
+      name: $scope.name,
+      activity: $scope.ready? 'start' : 'break'
+    }
+    $http.post(api('drivers'), payload).then(
+      res => {
+        console.log(res.data);
+      },
+      err => {
+        console.error(err);
+      }
+    )
+  }
 
   $http.get(api('drivers')).then(
     (res) => {
