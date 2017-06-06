@@ -18,13 +18,16 @@ APP_DATA = abspath(join(dirname(__file__), '..', 'app_data'))
 
 def seed(app):
     print("Initializing and seeding database_utils.", end='\t')
-    if not database_exists(SQLALCHEMY_DATABASE_URI):
-        if SQLALCHEMY_DATABASE_URI.startswith('sqlite'):
+
+    db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', SQLALCHEMY_DATABASE_URI)
+
+    if not database_exists(db_uri):
+        if db_uri.startswith('sqlite'):
             with sqlite3.connect(join(APP_DATA, 'data.db')):
                 pass
         else:
             message = "Failed to connect to database. Please check if it is provisioned.\n" \
-                      "Database URI = " + SQLALCHEMY_DATABASE_URI
+                      "Database URI = " + db_uri
             raise Exception(message)
     else:
         print("Database exists. OKAY")

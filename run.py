@@ -1,5 +1,6 @@
 import argparse
 import os
+import subprocess
 
 import cherrypy
 
@@ -17,6 +18,9 @@ def make_parser():
     p.add_argument('-s', '--seed',
                    action='store_true',
                    help='Forcefully drop and re-seed database. [Default: False]')
+    p.add_argument('-t', '--test',
+                   action='store_true',
+                   help='Runs test.')
 
     return p
 
@@ -31,6 +35,13 @@ if __name__ == '__main__':
         seed(app)
         if not args.production:
             exit(0)
+
+    if args.test:
+        subprocess.call('pytest --cov-report term-missing --cov Dashboard')
+
+        if os.path.exists('.coverage'):
+            os.remove('.coverage')
+        exit(0)
 
     if args.production:
         port = int(os.environ.get('PORT', 5000))

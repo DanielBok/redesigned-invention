@@ -1,8 +1,11 @@
 aniso8601==1.2.0
+blinker==1.4
 CherryPy==3.8.0
 click==6.7
+colorama==0.3.9
 Flask==0.12.2
 Flask-Cors==3.0.2
+Flask-DebugToolbar==0.10.1
 Flask-Login==0.4.0
 Flask-RESTful==0.3.5
 Flask-SQLAlchemy==2.2
@@ -12,6 +15,8 @@ Jinja2==2.9.6
 MarkupSafe==0.23
 numpy==1.12.1
 pandas==0.20.1
+py==1.4.34
+pytest==3.1.1
 python-dateutil==2.6.0
 pytz==2017.2
 six==1.10.0

@@ -4,7 +4,7 @@ from Dashboard.blueprints.api import api
 from Dashboard.blueprints.manager import managers
 from Dashboard.blueprints.user import user
 from Dashboard.blueprints.user.models import User
-from Dashboard.extensions import login_manager, db, csrf
+from Dashboard.extensions import login_manager, db, csrf, toolbar
 from Dashboard.blueprints.driver import driver
 
 
@@ -28,6 +28,7 @@ def create_app(settings_override=None):
     app.register_blueprint(driver, url_prefix='/driver')
 
     # Extend app to use other 3rd-party flask libraries
+    toolbar.init_app(app)
     login_manager.init_app(app)
     db.init_app(app)
     csrf.init_app(app)
