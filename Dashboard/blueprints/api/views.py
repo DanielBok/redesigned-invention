@@ -52,27 +52,13 @@ class DriversCtrl(Resource):
 
         identity = data['name']
         activity = data['activity'].lower()
-        task_id = data.get('task_id', None)
         d = Drivers.get_by_identity(identity)
 
         if activity in {'stop', 'break'}:
-            if activity == 'stop':
-                d.stop_work()
-            if activity == 'break':
-                d.pause()
-
-            if task_id is not None:
-                d.return_task(task_id)
-
-        task_dict = None
+            d.stop_work(activity)
 
         if activity in {'start', 'complete'}:
             d.ready()
-            task = Tasks.get_first_task()
-            if task is not None:
-                d.work_on(task)
-
-            task_dict = task.to_dict()
 
         return jsonify({
             'driver': {
@@ -80,7 +66,7 @@ class DriversCtrl(Resource):
                 'status': d.status.value,
                 'task_id': d.task_id
             },
-            'task': task_dict
+            'task': d.get_task()
         })
 
 
