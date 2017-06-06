@@ -1,13 +1,9 @@
-from os.path import abspath, dirname, join
-
-import pandas as pd
 from flask import Blueprint, request, redirect, jsonify
 from flask_restful import Api, Resource
 
 from Dashboard.extensions import csrf
 from utils import now
 from .models import Drivers, Flights, Tasks
-from .optimizer import fcfs
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp, decorators=[csrf.exempt])
@@ -28,19 +24,6 @@ class FlightsCtrl(Resource):
         results = Flights.get_flight_from_time(now(), forecast)
         return jsonify({
             'schedule': results
-        })
-
-
-class Schedule(Resource):
-    def get(self):
-        start = now()
-        forecast = request.args.get('forecast', 4)
-        root_dir = abspath(join(dirname(__file__), '..', '..', '..', 'app_data'))
-        df = pd.read_pickle(join(root_dir, 'flights.p'))
-        results = fcfs(df, start, forecast)
-
-        return jsonify({
-            'data': results
         })
 
 
@@ -101,7 +84,6 @@ class DriversCtrl(Resource):
         })
 
 
-api.add_resource(Schedule, '/schedule')
 api.add_resource(FlightsCtrl, '/flights')
 api.add_resource(TasksCtrl, '/tasks')
 api.add_resource(DriversCtrl, '/drivers')
