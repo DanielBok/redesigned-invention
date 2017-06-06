@@ -8,82 +8,6 @@ from database_utils.mixins import ResourceMixin, AwareDateTime
 from utils import now
 
 
-class Tasks(ResourceMixin, db.Model):
-    STATUSES = [
-        ('ready', 'Ready'),
-        ('er', 'En-route'),
-        ('done', 'Done')
-    ]
-
-    __tablename = 'tasks'
-
-    # Task info
-    id = db.Column(db.Integer(), primary_key=True)
-    status = db.Column(ChoiceType(STATUSES), nullable=False, index=True, default='ready')
-    ready_time = db.Column(AwareDateTime(), index=True)
-    completed_time = db.Column(AwareDateTime(), index=True)
-
-    # Containers info
-    source = db.Column(db.String(10), nullable=False)
-    destination = db.Column(db.String(10), nullable=False)
-    containers = db.Column(db.Integer, nullable=False, index=True)
-
-    # Driver details
-    driver = db.Column(db.String(50), nullable=True)
-
-    def __init__(self, **kwargs):
-        super(Tasks, self).__init__(**kwargs)
-
-    def to_dict(self):
-        return {
-            'task_id': self.id,
-            'ready_time': self.ready_time,
-            'status': self.status.value,
-            'source': self.source,
-            'destination': self.destination,
-            'containers': self.containers,
-            'driver': self.driver
-        }
-
-    def do_task(self, driver: Drivers):
-        self.driver = driver.name_
-        self.status = Choice('er', 'En-route')
-        return self.save()
-
-    def return_task(self):
-        self.status = Choice('ready', 'Ready')
-        return self.save()
-
-    @classmethod
-    def get_first_task(cls) -> 'Tasks':
-        return (Tasks.query
-                .order_by(Tasks.ready_time)
-                .first())
-
-    @classmethod
-    def get_task_by_id(cls, task_id) -> 'Tasks':
-        return (Tasks.query
-                .filter(Tasks.id == task_id)
-                .first())
-
-    @classmethod
-    def get_all_tasks_since(cls, start: dt, stop: dt = None):
-        if stop is None:
-            stop = now()
-        return (Tasks.query
-                .filter((Tasks.ready_time >= start) &
-                        (Tasks.ready_time <= stop))
-                .all())
-
-    @classmethod
-    def get_all_undone_tasks(cls, forecast=4):
-        records = (Tasks.query
-                   .filter((Tasks.status == Choice('ready', 'Ready')) &
-                           (Tasks.ready_time <= now() + td(hours=forecast)))
-                   .all())
-        return [t.to_dict() for t in records]
-
-
 class Flights(ResourceMixin, db.Model):
     TYPES = [
         ('A', 'Arrival'),
@@ -196,3 +120,79 @@ class Drivers(ResourceMixin, db.Model):
     @classmethod
     def get_all_drivers(cls):
         return [{'name': d.name_, 'status': d.status.value, 'task_id': d.task_id} for d in Drivers.query.all()]
+
+
+class Tasks(ResourceMixin, db.Model):
+    STATUSES = [
+        ('ready', 'Ready'),
+        ('er', 'En-route'),
+        ('done', 'Done')
+    ]
+
+    __tablename = 'tasks'
+
+    # Task info
+    id = db.Column(db.Integer(), primary_key=True)
+    status = db.Column(ChoiceType(STATUSES), nullable=False, index=True, default='ready')
+    ready_time = db.Column(AwareDateTime(), index=True)
+    completed_time = db.Column(AwareDateTime(), index=True)
+
+    # Containers info
+    source = db.Column(db.String(10), nullable=False)
+    destination = db.Column(db.String(10), nullable=False)
+    containers = db.Column(db.Integer, nullable=False, index=True)
+
+    # Driver details
+    driver = db.Column(db.String(50), nullable=True)
+
+    def __init__(self, **kwargs):
+        super(Tasks, self).__init__(**kwargs)
+
+    def to_dict(self):
+        return {
+            'task_id': self.id,
+            'ready_time': self.ready_time,
+            'status': self.status.value,
+            'source': self.source,
+            'destination': self.destination,
+            'containers': self.containers,
+            'driver': self.driver
+        }
+
+    def do_task(self, driver: Drivers):
+        self.driver = driver.name_
+        self.status = Choice('er', 'En-route')
+        return self.save()
+
+    def return_task(self):
+        self.status = Choice('ready', 'Ready')
+        return self.save()
+
+    @classmethod
+    def get_first_task(cls) -> 'Tasks':
+        return (Tasks.query
+                .order_by(Tasks.ready_time)
+                .first())
+
+    @classmethod
+    def get_task_by_id(cls, task_id) -> 'Tasks':
+        return (Tasks.query
+                .filter(Tasks.id == task_id)
+                .first())
+
+    @classmethod
+    def get_all_tasks_since(cls, start: dt, stop: dt = None):
+        if stop is None:
+            stop = now()
+        return (Tasks.query
+                .filter((Tasks.ready_time >= start) &
+                        (Tasks.ready_time <= stop))
+                .all())
+
+    @classmethod
+    def get_all_undone_tasks(cls, forecast=4):
+        records = (Tasks.query
+                   .filter((Tasks.status == Choice('ready', 'Ready')) &
+                           (Tasks.ready_time <= now() + td(hours=forecast)))
+                   .all())
+        return [t.to_dict() for t in records]

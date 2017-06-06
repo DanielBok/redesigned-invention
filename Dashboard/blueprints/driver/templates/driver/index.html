@@ -41,50 +41,53 @@
                                     <span class="card-title">Current Task</span>
                                     <table>
                                         <thead>
-                                        <th>Type</th>
+                                        <th>Task ID</th>
                                         <th>Source</th>
                                         <th>Destination</th>
-                                        <th>Time</th>
+                                        <th>Ready Time</th>
                                         <th>Containers</th>
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td>[[ mockData.Type ]]</td>
-                                            <td>[[ mockData.Source ]]</td>
-                                            <td>[[ mockData.Destination ]]</td>
-                                            <td>[[ mockData.Time ]]</td>
-                                            <td><p ng-repeat="c in mockData.Containers">[[ c ]]</p></td>
+                                            <td>[[ task.task_id ]]</td>
+                                            <td>[[ task.source ]]</td>
+                                            <td>[[ task.destination ]]</td>
+                                            <td>[[ task.ready_time ]]</td>
+                                            <td>[[ task.containers ]]</td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="card-action">
-                                    <button class="btn waves-effect waves-light orange" data-target="passModal">
+                                    <button class="btn waves-effect waves-light red" data-target="passModal">
                                         Pass <i class="material-icons right">send</i>
                                     </button>
                                     <button class="btn waves-effect waves-light amber darken-4"
                                             ng-click="completeTask()">
                                         Completed <i class="material-icons right">done</i>
                                     </button>
+                                    <button class="btn waves-effect waves-light orange" ng-click="refreshTasks()">
+                                        Refresh <i class="material-icons right">loop</i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div id="passModal" class="modal">
-                    <div class="modal-content">
-                        <h5>Confirm Action</h5>
-                        <p>Are you sure you want to pass this task? The duty officer will be informed of your
-                            action.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a ng-click="passTask()" class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
-                        <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-                    </div>
-                </div>
-
             </div>
+
+            <div id="passModal" class="modal">
+                <div class="modal-content">
+                    <h5>Confirm Action</h5>
+                    <p>Are you sure you want to pass this task? The duty officer will be informed of your
+                        action.</p>
+                </div>
+                <div class="modal-footer">
+                    <a ng-click="passTask()" class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

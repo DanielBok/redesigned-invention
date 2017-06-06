@@ -2,6 +2,14 @@
 app.controller("driverCtrl", ($scope, $http) => {
     $scope.loading = true;
     $scope.ready = false;
+    $scope.name = "";
+    $scope.task = {
+        containers: null,
+        destination: null,
+        source: null,
+        ready_time: null,
+        task_id: null
+    };
 
     $http.get(api('drivers')).then(
         (res) => {
@@ -13,27 +21,110 @@ app.controller("driverCtrl", ($scope, $http) => {
             $scope.loading = false;
         }
     );
-    $scope.mockData = {
-        Type: 'Arrival',
-        Source: 'SQ123',
-        Destination: 'HOTA',
-        Time: '13:37',
-        Containers: ['12345', '67890', '13337'],
-    };
-
     $scope.done = false;
 
+    $scope.setReady = function() {
+        if ($scope.ready){
+            let payload = {
+                name: $scope.name,
+                activity: "stop"
+            };
+            $http.post(api('drivers'), payload).then(
+              (res) => {
+                  console.log(res);
+              },
+              (err) => {
+                  console.error('error', err);
+              }
+            );
+            $scope.ready = false;
+
+        } else {
+            let payload = {
+                name: $scope.name,
+                activity: "start"
+            };
+            $http.post(api('drivers'), payload).then(
+              (res) => {
+                  console.log(res);
+                  if (res.data.task == null) {
+                      $scope.done = true;
+                  } else {
+                      $scope.task = res.data.task;
+                      $scope.done = false;
+                  };
+              },
+              (err) => {
+                  console.error('error', err);
+              }
+            );
+            $scope.ready = true;
+        };
+    };
+
     $scope.passTask = function () {
-        $scope.done = true;
+        $scope.loading = true;
+        let payload = {
+            name: $scope.name,
+            activity: "break"
+        };
+        $http.post(api('drivers'), payload).then(
+          (res) => {
+              console.log(res);
+          },
+          (err) => {
+              console.error('error', err);
+          }
+        );
+        $scope.loading = false;
+        Materialize.toast('Task passed!', 2000)
     };
+
     $scope.completeTask = function () {
-        $scope.done = true;
+        $scope.loading = true;
+        let payload = {
+            name: $scope.name,
+            activity: "complete"
+        };
+        $http.post(api('drivers'), payload).then(
+          (res) => {
+              console.log(res);
+              if (res.data.task == null){
+                  $scope.done = true;
+              } else {
+                  $scope.task = res.data.task;
+                  $scope.done = false;
+              };
+          },
+          (err) => {
+              console.error('error', err);
+          }
+        );
+        $scope.loading = false;
+        Materialize.toast('Task completed!', 2000)
     };
+
     $scope.refreshTasks = function () {
         $scope.loading = true;
-        // api call
-        $scope.done = false;
+        let payload = {
+            name: $scope.name,
+            activity: "start"
+        };
+        $http.post(api('drivers'), payload).then(
+          (res) => {
+              console.log(res);
+              if (res.data.task == null){
+                  $scope.done = true;
+              } else {
+                  $scope.task = res.data.task;
+                  $scope.done = false;
+              };
+          },
+          (err) => {
+              console.error('error', err);
+          }
+        );
         $scope.loading = false;
+        Materialize.toast('Content refreshed!', 2000)
     };
 });
-
