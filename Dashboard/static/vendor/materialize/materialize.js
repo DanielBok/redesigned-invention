@@ -2844,7 +2844,7 @@ if (jQuery) {
 	$.scrollSpy = function(selector, options) {
 	  var defaults = {
 			throttle: 100,
-			scrollOffset: 200 // offset - 200 allows elements near bottom of page to scroll
+			scrollOffset: 200 // offset - 200 allows elements near bottom of driver to scroll
     };
     options = $.extend(defaults, options);
 
@@ -5213,7 +5213,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                     // Set it as open.
                     STATE.open = true
 
-                    // Prevent the page from scrolling.
+                    // Prevent the driver from scrolling.
                     if ( IS_DEFAULT_THEME ) {
                         $html.
                             css( 'overflow', 'hidden' ).
@@ -5265,7 +5265,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                         // Check if there is a key movement or “enter” keypress on the element.
                         else if ( target == P.$root[0] && ( keycodeToMove || keycode == 13 ) ) {
 
-                            // Prevent the default action to stop page movement.
+                            // Prevent the default action to stop driver movement.
                             event.preventDefault()
 
                             // Trigger the key movement action.
@@ -5331,7 +5331,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 // Set it as closed.
                 STATE.open = false
 
-                // Allow the page to scroll.
+                // Allow the driver to scroll.
                 if ( IS_DEFAULT_THEME ) {
                     $html.
                         css( 'overflow', '' ).
@@ -5777,7 +5777,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
         // Check if `space` or `delete` was pressed or the picker is closed with a key movement.
         if ( keycode == 32 || isKeycodeDelete || !STATE.open && P.component.key[keycode] ) {
 
-            // Prevent it from moving the page and bubbling to doc.
+            // Prevent it from moving the driver and bubbling to doc.
             event.preventDefault()
             event.stopPropagation()
 

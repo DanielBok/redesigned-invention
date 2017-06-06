@@ -1,0 +1,57 @@
+{% extends 'manager/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
+<div ng-controller="allocCtrl" ng-cloak class="container">
+    <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+        <div ng-switch="loading">
+            <div ng-switch-when="true">
+              {{ loader() }}
+            </div>
+            <div ng-switch-default>
+                <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+                    <button class="col s3 l2 btn waves-effect waves-light {{ nav_color }}" ng-click="print()">
+                        Print <i class="material-icons right">print</i>
+                    </button>
+                    <input type="text" ng-model="query.text" class="col offset-s1 s7 offset-l1 l8"
+                    placeholder="Search Bar">
+                </div>
+                <br>
+                <table class="bordered">
+                    <thead>
+                    <tr>
+                        <th>Driver</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>ETA</th>
+                        <th>Container ID</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="flight in schedule | filter: search_">
+                        <!-- <td>
+                            <div class="input-field">
+                                <select>
+                                    <option selected>[[ flight.DRIVER ]]</option>
+                                    <option ng-repeat="d in drivers">[[ d.name ]]</option>
+                                </select>
+                            </div>
+                        </td> -->
+                        <td>[[ flight.DRIVER ]]</td>
+                        <td>[[ flight.FROM ]]</td>
+                        <td>[[ flight.TO ]]</td>
+                        <td>[[ flight.TIME | toDateOfArrival ]]</td>
+                        <td><p ng-repeat="c in flight.CONTAINERS">[[ c | toID ]]</p></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

@@ -47,7 +47,7 @@ def authentication(app, user_model):
     :return: app instance
     """
 
-    login_manager.login_view = 'user.login'  # the login page
+    login_manager.login_view = 'user.login'  # the login driver
 
     @login_manager.user_loader
     def load_user(uid):

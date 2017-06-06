@@ -34,16 +34,6 @@ class Tasks(ResourceMixin, db.Model):
     def __init__(self, **kwargs):
         super(Tasks, self).__init__(**kwargs)
 
-    def put_back_task(self, task_id):
-        task = self.get_task_by_id(task_id)
-        task.status = 'ready'
-        self.save()
-
-    def set_driver(self, name: str):
-        self.driver = name
-        self.save()
-        return self
-
     def to_dict(self):
         return {
             'task_id': self.id,
@@ -55,18 +45,18 @@ class Tasks(ResourceMixin, db.Model):
             'driver': self.driver
         }
 
-    def unset_task(self):
+    def do_task(self, driver: Drivers):
+        self.driver = driver.name_
+        self.status = Choice('er', 'En-route')
+        return self.save()
+
+    def return_task(self):
         self.status = Choice('ready', 'Ready')
-        self.save()
-        return self
+        return self.save()
 
     @classmethod
     def get_first_task(cls) -> 'Tasks':
         return (Tasks.query
-                .filter(
-                        (Tasks.ready_time <= now()) &
-                        (Tasks.status == Choice('ready', 'Ready'))
-                        )
                 .order_by(Tasks.ready_time)
                 .first())
 
@@ -80,14 +70,18 @@ class Tasks(ResourceMixin, db.Model):
     def get_all_tasks_since(cls, start: dt, stop: dt = None):
         if stop is None:
             stop = now()
-        if start is None:
-            return Tasks.query.filter((Tasks.ready_time >= start) & (Tasks.ready_time <= stop)).all()
+        return (Tasks.query
+                .filter((Tasks.ready_time >= start) &
+                        (Tasks.ready_time <= stop))
+                .all())
 
     @classmethod
     def get_all_undone_tasks(cls, forecast=4):
-        return [t.to_dict() for t in Tasks.query
-            .filter((Tasks.status == Choice('ready', 'Ready')) & (Tasks.ready_time <= now() + td(hours=forecast)))
-            .all()]
+        records = (Tasks.query
+                   .filter((Tasks.status == Choice('ready', 'Ready')) &
+                           (Tasks.ready_time <= now() + td(hours=forecast)))
+                   .all())
+        return [t.to_dict() for t in records]
 
 
 class Flights(ResourceMixin, db.Model):
@@ -153,31 +147,42 @@ class Drivers(ResourceMixin, db.Model):
     def __init__(self, **kwargs):
         super(Drivers, self).__init__(**kwargs)
 
-    def update_activity(self, act_):
-        self.status = act_
-        self.save()
-        return self
-
-    def update_task(self, task_id):
-        self.task_id = task_id
-        self.status = Choice('on', 'On Task')
-        self.save()
-        return self
-
-    def pause(self):
-        self.status = Choice('break', 'Break')
-        self.save()
-        return self.task_id
+    def get_task(self):
+        if self.task_id is None:
+            return None
+        return Tasks.get_task_by_id(self.task_id).to_dict()
 
     def ready(self):
-        self.status = Choice('ready', 'Ready')
-        self.save()
-        return self
+        self.status = Choice('ready', 'Ready')  # put to ready
 
-    def stop_work(self):
-        self.status = Choice('off', 'Off Work')
-        self.save()
-        return self
+        task = Tasks.get_first_task()  # get task
+        if task is not None:  # if there is task, give driver task
+            self.task_id = task.id
+            task.do_task(self)
+            self.status = Choice('on', 'On Task')
+        return self.save()
+
+    def stop_work(self, type_: str):
+        """
+        Stops work and returns task to Task queue
+        :param type_: type of stop. Break or off work
+        :return: self
+        """
+
+        if type_.lower() == 'break':
+            self.status = Choice('break', 'Break')
+        elif type_.lower() == 'stop':
+            self.status = Choice('off', 'Off Work')
+        else:
+            raise ValueError('type_ argument is not recognized')
+
+        if self.task_id is not None:
+            task = Tasks.get_task_by_id(self.task_id)
+            task.driver = None
+            task.return_task()
+            self.task_id = None
+
+        return self.save()
 
     @classmethod
     def get_by_identity(cls, identity: str) -> 'Drivers':
@@ -190,4 +195,4 @@ class Drivers(ResourceMixin, db.Model):
 
     @classmethod
     def get_all_drivers(cls):
-        return [{'name': d.name_, 'status': d.status.value} for d in Drivers.query.all()]
+        return [{'name': d.name_, 'status': d.status.value, 'task_id': d.task_id} for d in Drivers.query.all()]

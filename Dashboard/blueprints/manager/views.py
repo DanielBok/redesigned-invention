@@ -5,7 +5,10 @@ from flask_login import login_required
 
 from Dashboard.blueprints.user.decorators import role_required
 
-managers = Blueprint('manager', __name__, template_folder='templates')
+managers = Blueprint('manager', __name__,
+                     template_folder='templates',
+                     static_folder='static',
+                     static_url_path='/static')
 
 
 @managers.before_request
@@ -27,7 +30,7 @@ def manpower():
         'page_title': 'Manpower',
         'page_color': 'indigo darken-2'
     }
-    return render_template('page/manpower.html', **payload)
+    return render_template('manager/manpower.html', **payload)
 
 
 @managers.route('/allocation')
@@ -37,7 +40,7 @@ def allocation():
         'page_title': 'Allocation',
         'page_color': 'indigo darken-2'
     }
-    return render_template('page/allocation.html', **payload)
+    return render_template('manager/allocation.html', **payload)
 
 
 @managers.route('/flight-schedules')
@@ -47,7 +50,7 @@ def flight_schedules():
         'page_title': 'Flight Schedules',
         'page_color': 'indigo darken-2'
     }
-    return render_template('page/flight-schedules.html', **payload)
+    return render_template('manager/flight-schedules.html', **payload)
 
 
 @managers.route('/taskboard')
@@ -57,7 +60,7 @@ def taskboard():
         'page_title': 'Taskboard',
         'page_color': 'indigo darken-2'
     }
-    return render_template('page/taskboard.html', **payload)
+    return render_template('manager/taskboard.html', **payload)
 
 
 @managers.route('/make_csv', methods=['POST'])
@@ -78,6 +81,16 @@ def make_csv():
     resp.headers["Content-type"] = "text/csv"
 
     return resp
+
+
+@managers.route('/controller')
+def driver_controller():
+    payload = {
+        'title': 'Pronto Dashboard',
+        'page_title': 'Manager Master',
+        'page_color': 'indigo darken-2'
+    }
+    return render_template('manager/driver-controller.html', **payload)
 
 
 @managers.errorhandler(404)

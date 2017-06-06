@@ -1,0 +1,100 @@
+{% extends 'driver/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
+<div ng-controller="driverCtrl" ng-cloak class="container" ng-init="name ='{{ current_user.name }}'">
+    <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+        <div ng-switch="loading">
+            <div ng-switch-when="true">
+                {{ loader() }}
+            </div>
+            <div ng-switch-default>
+                <div class="row">
+                    <div class="switch">
+                        <label>
+                            Not Ready
+                            <input type="checkbox" ng-click='setReady()'>
+                            <span class="lever"></span>
+                            Ready
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-panel" ng-show="!ready">
+                            <p>You need to be ready to receive tasks.</p>
+                        </div>
+
+                        <div class="row" ng-show="ready">
+                            <div class="card" ng-show="done">
+                                <div class="card-content">
+                                    <p>You have no current tasks.</p>
+                                </div>
+                                <div class="card-action">
+                                    <button class="btn waves-effect waves-light orange" ng-click="refreshTasks()">
+                                        Refresh <i class="material-icons right">loop</i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card" ng-show="!done">
+                                <div class="card-content">
+                                    <span class="card-title">Current Task</span>
+                                    <table>
+                                        <thead>
+                                        <th>Type</th>
+                                        <th>Source</th>
+                                        <th>Destination</th>
+                                        <th>Time</th>
+                                        <th>Containers</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>[[ mockData.Type ]]</td>
+                                            <td>[[ mockData.Source ]]</td>
+                                            <td>[[ mockData.Destination ]]</td>
+                                            <td>[[ mockData.Time ]]</td>
+                                            <td><p ng-repeat="c in mockData.Containers">[[ c ]]</p></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="card-action">
+                                    <button class="btn waves-effect waves-light orange" data-target="passModal">
+                                        Pass <i class="material-icons right">send</i>
+                                    </button>
+                                    <button class="btn waves-effect waves-light amber darken-4"
+                                            ng-click="completeTask()">
+                                        Completed <i class="material-icons right">done</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="passModal" class="modal">
+                    <div class="modal-content">
+                        <h5>Confirm Action</h5>
+                        <p>Are you sure you want to pass this task? The duty officer will be informed of your
+                            action.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a ng-click="passTask()" class="modal-action modal-close waves-effect waves-green btn-flat">Confirm</a>
+                        <a class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(document).ready(function () {
+        $('.modal').modal();
+    });
+</script>
+{% endblock %}
