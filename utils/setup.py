@@ -1,30 +1,30 @@
-import sqlite3
+import sys
 from datetime import timedelta as td
 from os.path import join, dirname, abspath, exists
 
 import pandas as pd
 from numpy import random as rng
-from sqlalchemy_utils import database_exists
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy_utils import database_exists, create_database
 
 from Dashboard.blueprints.api.models import Drivers, Flights, Tasks
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db
 from configs.settings import SQLALCHEMY_DATABASE_URI
-from database_utils.extra import ProgressEnumerate
-from utils import now
+from utils.extra import ProgressEnumerate
+from .datetime import now
 
 APP_DATA = abspath(join(dirname(__file__), '..', 'app_data'))
 
 
 def seed(app):
-    print("Initializing and seeding database_utils.", end='\t')
+    print("Initializing and seeding utils.", end='\t')
 
     db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', SQLALCHEMY_DATABASE_URI)
 
     if not database_exists(db_uri):
         if db_uri.startswith('sqlite'):
-            with sqlite3.connect(join(APP_DATA, 'data.db')):
-                pass
+            create_database(db_uri)
         else:
             message = "Failed to connect to database. Please check if it is provisioned.\n" \
                       "Database URI = " + db_uri
@@ -44,6 +44,23 @@ def seed(app):
     db.metadata.drop_all(db.engine, tables=tables)
     db.metadata.create_all(db.engine, tables=tables)
     print('Complete')
+
+    insert_data(db)
+
+    print('Seeding Complete')
+
+
+def local_db_exists():
+    return exists(join(APP_DATA, 'data.db'))
+
+
+def insert_data(_db):
+    """
+    Inserts data into empty database
+    :param _db: SQLAlchemy db context
+    :return: None
+    """
+
 
     print('Seeding employees and driver tables.')
     # insert employees
@@ -68,10 +85,10 @@ def seed(app):
 
     for e in ProgressEnumerate(employees):
         if not User.find_by_identity(e['username']):
-            db.session.add(User(**e))
+            _db.session.add(User(**e))
 
         if e['role'] == 'driver' and not Drivers.get_by_identity(e['name']):
-            db.session.add(Drivers(name_=e['name']))
+            _db.session.add(Drivers(name_=e['name']))
 
     print('Seeding Flights and Tasks table')
     df = pd.DataFrame(
@@ -92,7 +109,7 @@ def seed(app):
     time = otime + td(minutes=5)
     ddf = df.to_dict('records')
     for e in ProgressEnumerate(ddf):
-        db.session.add(Flights(**e))
+        _db.session.add(Flights(**e))
 
         nc = e['num_containers']
         if nc > 0:
@@ -119,17 +136,11 @@ def seed(app):
                     'source': e['flight_num'] if e['type_'] == 'A' else 'HOTA',
                     'destination': e['flight_num'] if e['type_'] == 'D' else 'HOTA'
                 }
-                db.session.add(Tasks(**task_data))
+                _db.session.add(Tasks(**task_data))
 
     try:
         print("Committing data. This may take a while..")
-        db.session.commit()
-    except:
-        db.session.rollback()
-        raise Exception('Mass commit failed')
-
-    print('Seeding Complete')
-
-
-def local_db_exists():
-    return exists(join(APP_DATA, 'data.db'))
+        _db.session.commit()
+    except SQLAlchemyError as e:
+        _db.session.rollback()
+        print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
