@@ -62,24 +62,6 @@ app.controller("driverCtrl", ($scope, $http) => {
         };
     };
 
-    $scope.passTask = function () {
-        $scope.loading = true;
-        let payload = {
-            name: $scope.name,
-            activity: "break"
-        };
-        $http.post(api('drivers'), payload).then(
-          (res) => {
-              console.log(res);
-          },
-          (err) => {
-              console.error('error', err);
-          }
-        );
-        $scope.loading = false;
-        Materialize.toast('Task passed!', 2000)
-    };
-
     $scope.completeTask = function () {
         $scope.loading = true;
         let payload = {

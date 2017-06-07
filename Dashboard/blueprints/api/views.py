@@ -60,7 +60,7 @@ class DriversCtrl(Resource):
 
         task_dict = None
         if activity in {'start', 'complete'}:
-            d.ready()
+            d.ready(activity)
 
         return jsonify({
             'driver': {

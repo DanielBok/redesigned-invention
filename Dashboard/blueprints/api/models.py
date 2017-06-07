@@ -76,8 +76,13 @@ class Drivers(ResourceMixin, db.Model):
             return None
         return Tasks.get_task_by_id(self.task_id).to_dict()
 
-    def ready(self):
+    def ready(self, activity='ready'):
         self.status = Choice('ready', 'Ready')  # put to ready
+
+        if activity == 'complete':
+            task = Tasks.get_task_by_id(self.task_id)
+            task.complete_task()
+            self.task_id = None
 
         task = Tasks.get_first_task()  # get task
         if task is not None:  # if there is task, give driver task
@@ -148,6 +153,10 @@ class Tasks(ResourceMixin, db.Model):
     def __init__(self, **kwargs):
         super(Tasks, self).__init__(**kwargs)
 
+    def __str__(self):
+        msg = 'TASK DATA\n' + '\n'.join("{0}\t {1}".format(str(k), str(v)) for k, v in self.to_dict().items())
+        return msg
+
     def to_dict(self):
         return {
             'task_id': self.id,
@@ -168,10 +177,15 @@ class Tasks(ResourceMixin, db.Model):
         self.status = Choice('ready', 'Ready')
         return self.save()
 
+    def complete_task(self):
+        self.status = Choice('done', 'Done')
+        self.completed_time = now()
+        return self.save()
+
     @classmethod
     def get_first_task(cls) -> 'Tasks':
         return (Tasks.query
-                .filter((Tasks.ready_time <= now()) &
+                .filter((Tasks.ready_time <= now() + td(hours=24)) &
                         (Tasks.status == Choice('ready', 'Ready')))
                 .order_by(Tasks.ready_time)
                 .first())
