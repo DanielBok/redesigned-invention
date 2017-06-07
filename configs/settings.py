@@ -1,22 +1,12 @@
-def _hidden_env_data():
-    import os
-    from os.path import dirname, join, abspath
+import os
+from os import getenv
+from os.path import abspath, dirname, join
 
-    root_folder = abspath(join(dirname(__file__), '..'))
-
-    data = {
-        'SQLALCHEMY_DATABASE_URI': os.environ.get('DATABASE_URL',
-                                                  "sqlite:///{path}".format(
-                                                      path=join(root_folder, 'app_data', 'data.db'))),
-    }
-
-    return data
-
-
-_data = _hidden_env_data()
-
-DEBUG = True
-SECRET_KEY = "SECRETKEY!@#$"
+DEBUG = getenv('DEBUG', True)
+DEBUG_TB_INTERCEPT_REDIRECTS = getenv('DEBUG_TB_INTERCEPT_REDIRECTS', False)
+SECRET_KEY = getenv('SECRET_KEY', os.urandom(128).hex())
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_DATABASE_URI = _data['SQLALCHEMY_DATABASE_URI']
+SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL',
+                                 "sqlite:///{0}".format(abspath(join(dirname(__file__), '..', 'app_data', 'data.db'))))
 TIMEZONE = 'Asia/Singapore'
+SERVER_NAME = getenv('SERVER_NAME', 'localhost:5000')

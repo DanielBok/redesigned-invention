@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from Dashboard.extensions import csrf
 
 from Dashboard.extensions import csrf
-from utils import now
+from utils.datetime import now
 from .models import Drivers, Flights, Tasks
 
 api_bp = Blueprint('api', __name__)

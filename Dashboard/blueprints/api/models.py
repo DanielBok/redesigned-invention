@@ -4,8 +4,8 @@ from numpy import random as rng
 from sqlalchemy_utils.types import ChoiceType, Choice
 
 from Dashboard.extensions import db
-from database_utils.mixins import ResourceMixin, AwareDateTime
-from utils import now
+from utils.mixins import ResourceMixin, AwareDateTime
+from utils.datetime import now
 
 
 class Flights(ResourceMixin, db.Model):
@@ -171,6 +171,8 @@ class Tasks(ResourceMixin, db.Model):
     @classmethod
     def get_first_task(cls) -> 'Tasks':
         return (Tasks.query
+                .filter((Tasks.ready_time <= now()) &
+                        (Tasks.status == Choice('ready', 'Ready')))
                 .order_by(Tasks.ready_time)
                 .first())
 

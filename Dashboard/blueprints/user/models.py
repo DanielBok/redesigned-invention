@@ -3,7 +3,7 @@ from sqlalchemy_utils import ChoiceType
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Dashboard.extensions import db
-from database_utils.mixins import ResourceMixin
+from utils.mixins import ResourceMixin
 
 
 class User(UserMixin, ResourceMixin, db.Model):

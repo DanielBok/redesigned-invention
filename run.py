@@ -1,10 +1,12 @@
 import argparse
 import os
+import subprocess
+from os import getenv
 
 import cherrypy
 
 from Dashboard.app import create_app
-from database_utils.setup import seed, local_db_exists
+from utils.setup import seed, local_db_exists
 
 
 def make_parser():
@@ -14,9 +16,8 @@ def make_parser():
                    action='store_true',
                    help='Run in production. [Default: False, development mode]')
 
-    p.add_argument('-s', '--seed',
-                   action='store_true',
-                   help='Forcefully drop and re-seed database. [Default: False]')
+    p.add_argument('-b', '--build',
+                   action='store_true')
 
     return p
 
@@ -27,13 +28,16 @@ if __name__ == '__main__':
     parser = make_parser()
     args = parser.parse_args()
 
-    if args.seed:
-        seed(app)
-        if not args.production:
-            exit(0)
+    if args.build:
+        subprocess.call('pip install --editable .', shell=True)
+        exit(0)
 
     if args.production:
-        port = int(os.environ.get('PORT', 5000))
+
+        if getenv('RESET_DATABASE', False):
+            seed(app)
+
+        port = int(getenv('PORT', 5000))
 
         static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'Dashboard', 'static'))
 
