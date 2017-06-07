@@ -1,6 +1,7 @@
 import argparse
 import os
 import subprocess
+from os import getenv
 
 import cherrypy
 
@@ -33,10 +34,10 @@ if __name__ == '__main__':
 
     if args.production:
 
-        if os.environ.get('RESET_DATABASE', False):
+        if getenv('RESET_DATABASE', False):
             seed(app)
 
-        port = int(os.environ.get('PORT', 5000))
+        port = int(getenv('PORT', 5000))
 
         static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'Dashboard', 'static'))
 
