@@ -3,6 +3,7 @@ blinker==1.4
 CherryPy==3.8.0
 click==6.7
 colorama==0.3.9
+coverage==4.3.4
 Flask==0.12.2
 Flask-Cors==3.0.2
 Flask-DebugToolbar==0.10.1
@@ -17,6 +18,7 @@ numpy==1.12.1
 pandas==0.20.1
 py==1.4.34
 pytest==3.1.1
+pytest-cov==2.3.1
 python-dateutil==2.6.0
 pytz==2017.2
 six==1.10.0
