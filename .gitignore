@@ -104,4 +104,4 @@ SECRET.ENV
 # useless files
 logs.txt
 *.Rhistory
-app_data/data.db
+app_data/*.db

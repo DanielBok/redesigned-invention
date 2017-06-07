@@ -56,5 +56,7 @@ def login():
 def logout():
     if current_user.role == 'driver':
         Drivers.get_by_identity(current_user.name).stop_work('stop')
+
     logout_user()
+    flash('You have been logged out.', 'success')
     return redirect(url_for('user.login'))
