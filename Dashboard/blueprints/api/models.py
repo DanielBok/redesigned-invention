@@ -91,6 +91,18 @@ class Drivers(ResourceMixin, db.Model):
             self.status = Choice('on', 'On Task')
         return self.save()
 
+    def update_task(self, newTask_id):
+        task = Tasks.get_task_by_id(self.task_id)
+        task.complete_task()
+
+        self.task_id = newTask_id
+        newTask = Tasks.get_task_by_id(newTask_id)
+        newTask.do_task(self)
+
+        task.return_task()
+        return self.save()
+
+
     def stop_work(self, type_: str):
         """
         Stops work and returns task to Task queue
