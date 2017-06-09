@@ -113,6 +113,17 @@ class Drivers(ResourceMixin, db.Model):
 
         return self.save()
 
+    def update_task(self, newTask_id):
+        task = Tasks.get_task_by_id(self.task_id)
+        task.complete_task()
+
+        self.task_id = newTask_id
+        newTask = Tasks.get_task_by_id(newTask_id)
+        newTask.do_task(self)
+
+        task.return_task()
+        return self.save()
+
     @classmethod
     def get_by_identity(cls, identity: str) -> 'Drivers':
         return Drivers.query.filter(Drivers.name_ == identity).first()

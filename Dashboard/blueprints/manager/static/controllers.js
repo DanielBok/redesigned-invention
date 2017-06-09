@@ -91,40 +91,63 @@ app.controller('fsCtrl', ($scope, $http, $location, NgTableParams) => {
 });
 
 // Controller for taskboard
-app.controller('tbCtrl', ($scope, $http) => {
+app.controller('tbCtrl', ($scope, $http , $interval) => {
     $scope.loading = true;
     let jq = $.noConflict();
-    $scope.test = "test";
+    $scope.editing = false;
+    $scope.free = null;
 
-    $http.get(api('tasks', {type: 'all'})).then(
-        (res) => {
-            console.log("Tasks ", res);
-            $scope.tasks = res.data.tasks;
-            setTimeout(() => jq('select').material_select(), 500);
-            $scope.loading = false;
-        },
-        (err) => {
-            console.error('error', err);
-            $scope.loading = false;
-        }
-    );
+    $scope.loadTaskBoard = () => {
+        $http.get(api('tasks', {type: 'all'})).then(
+            (res) => {
+                console.log("Tasks ", res);
+                $scope.tasks = res.data.tasks;
+                setTimeout(() => jq('select').material_select(), 500);
+            },
+            (err) => {
+                console.error('error', err);
+            }
+        );
 
-    $scope.queue = [];
-
-    $http.get(api('drivers')).then(
-        (res) => {
-            console.log("Drivers ", res);
-            $scope.drivers = res.data.drivers;
-            $scope.loading = false;
-        },
-        (err) => {
-            console.error('error', err);
-            $scope.loading = false;
-        }
-    );
-    $scope.changeDriver = (newDriver) => {
-        $scope.test = newDriver;
+        $http.get(api('drivers')).then(
+            (res) => {
+                console.log("Drivers ", res);
+                $scope.drivers = res.data.drivers;
+            },
+            (err) => {
+                console.error('error', err);
+            }
+        );
+        $scope.changeDriver = (newDriver) => {
+            $scope.test = newDriver;
+        };
+        $scope.loading = false
     };
+
+    $scope.deallocate = (task) => {
+        $scope.free = task.driver;
+        task.driver = null;
+    };
+
+    $scope.allocate = (task) => {
+        task.driver = $scope.free;
+        $scope.free = null;
+    };
+
+    $scope.toggleEdit = () => {
+        $scope.editing = !$scope.editing;
+    };
+
+    $scope.submit = () => {
+        $scope.toggleEdit();
+    };
+
+    $scope.loadTaskBoard();
+
+    // $interval(function() {
+    //     $scope.loadTaskBoard();
+    // }, 5000);
+
 });
 
 // Magic controller for testing purposes

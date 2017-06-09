@@ -3,6 +3,10 @@ app.filter("toDateOfArrival", () => (x) => {
     return d.toISOString().replace('T', ' ').substring(0, 19);
 });
 
+app.filter("toJustTime", () => (s) => {
+    return s.substring(17, 22);
+});
+
 app.filter("toID", () => (y) => {
     let c = y.split(" ");
     return c[1];
