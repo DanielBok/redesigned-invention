@@ -51,80 +51,6 @@ app.controller("allocCtrl", ($scope, $http) => {
     }
 });
 
-// Controller for available
-app.controller("availCtrl", ($scope, $http) => {
-    $scope.loading = true;
-    $scope.status = {
-        editing: false,
-        sending: false,
-        send_done: false
-    };
-
-    let jq = $.noConflict();
-
-    $http.get(api('workers')).then(
-        res => {
-            $scope.loading = false;
-            $scope.drivers = res.data.workers;
-            $scope.num_drivers = res.data.num_workers;
-            console.log(res.data);
-        },
-        err => {
-            console.error(err)
-        }
-    );
-
-    $scope.range = function (n) {
-        let arr = new Array(n);
-        return [...arr.keys()];
-    };
-
-    $scope.toggleEdit = function () {
-        $scope.status.send_done = false;
-        if ($scope.status.editing) { // was editing, now complete.
-
-            // json payload to server
-            let payload = {
-                workers: {
-                    on: $scope.drivers.on,
-                    off: $scope.drivers.off
-                }
-            };
-
-            $scope.status.sending = true;
-            $http.post(api('workers'), payload).then(
-                res => {
-                    $scope.status = {
-                        editing: false,
-                        sending: false,
-                        send_done: true
-                    };
-                },
-                err => {
-                    console.error(err);
-                }
-            );
-        } else {
-            $scope.status.editing = true;
-        }
-    };
-    $scope.swap = function (index, flag) {
-        if (flag === 0) {
-            // Item was moved from on -> off
-            let worker = $scope.drivers.on[index];
-            $scope.drivers.on.splice(index, 1);
-            $scope.drivers.off.push(worker);
-        } else {
-            // Item was moved from off -> on
-            let worker = $scope.drivers.off[index];
-            $scope.drivers.off.splice(index, 1);
-            $scope.drivers.on.push(worker);
-        }
-        // console.log(index, worker);
-    };
-
-});
-
 // Controller for flight schedules
 app.controller('fsCtrl', ($scope, $http, $location, NgTableParams) => {
     $scope.fs = {
@@ -164,27 +90,15 @@ app.controller('fsCtrl', ($scope, $http, $location, NgTableParams) => {
     );
 });
 
-
 // Controller for taskboard
 app.controller('tbCtrl', ($scope, $http) => {
     $scope.loading = true;
     let jq = $.noConflict();
+    $scope.test = "test";
 
-    $http.get(api('drivers')).then(
+    $http.get(api('tasks', {type: 'all'})).then(
         (res) => {
-            console.log(res);
-            $scope.drivers = res.data.drivers;
-            $scope.loading = false;
-        },
-        (err) => {
-            console.error('error', err);
-            $scope.loading = false;
-        }
-    );
-
-    $http.get(api('tasks')).then(
-        (res) => {
-            // console.log(res);
+            console.log("Tasks ", res);
             $scope.tasks = res.data.tasks;
             setTimeout(() => jq('select').material_select(), 500);
             $scope.loading = false;
@@ -195,6 +109,22 @@ app.controller('tbCtrl', ($scope, $http) => {
         }
     );
 
+    $scope.queue = [];
+
+    $http.get(api('drivers')).then(
+        (res) => {
+            console.log("Drivers ", res);
+            $scope.drivers = res.data.drivers;
+            $scope.loading = false;
+        },
+        (err) => {
+            console.error('error', err);
+            $scope.loading = false;
+        }
+    );
+    $scope.changeDriver = (newDriver) => {
+        $scope.test = newDriver;
+    };
 });
 
 // Magic controller for testing purposes

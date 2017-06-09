@@ -90,7 +90,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         $scope.loading = true;
         let payload = {
             name: $scope.name,
-            activity: "start"
+            activity: "ready"
         };
         $http.post(api('drivers'), payload).then(
           (res) => {

@@ -11,3 +11,10 @@ app.filter("toID", () => (y) => {
 app.filter("replaceAll", () => (text, search, replacement) => {
     return text.replace(new RegExp(search, 'g'), replacement)
 });
+
+app.filter("removeDriver", () => (list, driver) => {
+    var res = list;
+    var index = list.indexOf(driver);
+    res.splice(index,1);
+    return
+});

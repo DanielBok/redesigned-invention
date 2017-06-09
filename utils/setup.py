@@ -127,14 +127,24 @@ def insert_data(_db):
             ct = st + td(minutes=rng.triangular(16, 17, 18))
 
             for c in _containers:
+
+                if e['type_'] == 'A':
+                    source = e['flight_num']
+                    dest = 'HOTA'
+                    flight_time = None
+                else:
+                    source = 'HOTA'
+                    dest = e['flight_num']
+
                 task_data = {
                     'status': 'done' if st <= time else 'ready',
                     'ready_time': rt,
                     'completed_time': ct,
+                    'flight_time': st,
                     'driver': rng.choice(names) if st <= otime else None,
                     'containers': c,
-                    'source': e['flight_num'] if e['type_'] == 'A' else 'HOTA',
-                    'destination': e['flight_num'] if e['type_'] == 'D' else 'HOTA'
+                    'source': source,
+                    'destination': dest
                 }
                 _db.session.add(Tasks(**task_data))
 

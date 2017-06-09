@@ -32,16 +32,15 @@
                       <td>
                           <div class="input-field">
                               <select>
-                                  <option selected>test[[ task.driver ]]</option>
-                                  <option ng-repeat="d in drivers">[[ d.name ]]</option>
+                                  <option></option>
+                                  <option ng-selected="d.name === task.driver" ng-repeat="d in drivers">[[ d.name ]]</option>
                               </select>
                           </div>
                       </td>
-                      <td><i class="material-icons">perm_identity</i><label>unassigned</label></td>
-                      <td><i class="material-icons">warning</i><label>passed</label></td>
-                      <td><i class="material-icons">work</i><label>ongoing</label></td>
-                      <td><i class="material-icons">done</i><label>done</label></td>
-                  </tr>
+                      <td ng-show="task.status == 'Ready'" ><i class="material-icons">perm_identity</i><label>Ready</label></td>
+                      <td ng-show="task.status == 'En-route'"><i class="material-icons">trending_flat</i><label>Enroute</label></td>
+                      <td ng-show="task.status == 'Done'" ><i class="material-icons">done</i><label>Done</label></td>
+                    </tr>
                   </tbody>
               </table>
             </div>

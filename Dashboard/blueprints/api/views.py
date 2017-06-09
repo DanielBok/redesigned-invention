@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect, jsonify
 from flask_restful import Api, Resource
 from Dashboard.extensions import csrf
+from datetime import timedelta as td
 
 from Dashboard.extensions import csrf
 from utils.datetime import now
@@ -30,7 +31,12 @@ class FlightsCtrl(Resource):
 
 class TasksCtrl(Resource):
     def get(self):
-        tasks = Tasks.get_all_undone_tasks()
+        print(now())
+        type_ = request.args.get('type')
+        if type_ == 'all':
+            tasks = Tasks.get_all_tasks_since(now(), now() + td(hours=24))
+        else:
+            tasks = Tasks.get_all_undone_tasks()
         return jsonify({
             'tasks': tasks
         })

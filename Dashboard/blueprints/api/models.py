@@ -124,7 +124,8 @@ class Drivers(ResourceMixin, db.Model):
 
     @classmethod
     def get_all_drivers(cls):
-        return [{'name': d.name_, 'status': d.status.value, 'task_id': d.task_id} for d in Drivers.query.all()]
+        return [{'name': d.name_, 'status': d.status.value, 'task_id': d.task_id}
+                for d in Drivers.query.all()]
 
 
 class Tasks(ResourceMixin, db.Model):
@@ -141,6 +142,7 @@ class Tasks(ResourceMixin, db.Model):
     status = db.Column(ChoiceType(STATUSES), nullable=False, index=True, default='ready')
     ready_time = db.Column(AwareDateTime(), index=True)
     completed_time = db.Column(AwareDateTime(), index=True)
+    flight_time = db.Column(AwareDateTime(), index=True)
 
     # Containers info
     source = db.Column(db.String(10), nullable=False)
@@ -161,6 +163,7 @@ class Tasks(ResourceMixin, db.Model):
         return {
             'task_id': self.id,
             'ready_time': self.ready_time,
+            'flight_time': self.flight_time,
             'status': self.status.value,
             'source': self.source,
             'destination': self.destination,
@@ -186,7 +189,8 @@ class Tasks(ResourceMixin, db.Model):
     def get_first_task(cls) -> 'Tasks':
         return (Tasks.query
                 .filter((Tasks.ready_time <= now() + td(hours=24)) &
-                        (Tasks.status == Choice('ready', 'Ready')))
+                        (Tasks.status == Choice('ready', 'Ready')) &
+                        (Tasks.flight_time >= now()))
                 .order_by(Tasks.ready_time)
                 .first())
 
@@ -200,10 +204,13 @@ class Tasks(ResourceMixin, db.Model):
     def get_all_tasks_since(cls, start: dt, stop: dt = None):
         if stop is None:
             stop = now()
-        return (Tasks.query
-                .filter((Tasks.ready_time >= start) &
-                        (Tasks.ready_time <= stop))
+        records = (Tasks.query
+                .filter(((Tasks.ready_time >= start) &
+                        (Tasks.ready_time <= stop)) |
+                        (Tasks.status == Choice('er', 'En-route')))
+                .order_by(Tasks.ready_time)
                 .all())
+        return [t.to_dict() for t in records]
 
     @classmethod
     def get_all_undone_tasks(cls, forecast=4):
