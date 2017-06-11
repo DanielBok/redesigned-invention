@@ -9,6 +9,7 @@ class TestUsers(TestMixin, AssertsMixin):
 
     def test_login(self):
         response = self.login()
+
         print(response.data)
         assert response.status_code == 200
 

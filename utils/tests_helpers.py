@@ -16,14 +16,13 @@ class TestMixin(object):
     """
 
     @pytest.fixture(autouse=True)
-    def set_common_fixtures(self, client):
-        # self.session = session
+    def set_common_fixtures(self, client, users):
         self.client = client
+        self.users = users
 
-    def login(self, identity='Roger Federer', password='test') -> Response:
+    def login(self, identity='manager', password='test') -> Response:
         """
         Login a specific user.
-
         :return: Flask response
         """
         user = {
@@ -38,7 +37,6 @@ class TestMixin(object):
     def logout(self) -> Response:
         """
         Logout a specific user.
-
         :return: Flask response
         """
         response = self.client.get(url_for('user.logout'), follow_redirects=True)

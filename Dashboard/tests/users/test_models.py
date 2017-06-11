@@ -2,12 +2,11 @@ from Dashboard.blueprints.user.models import User
 from utils.tests_helpers import TestMixin
 
 
-
 class TestUser(TestMixin):
-    def test_find_user(self, users):
-        # u = User.find_by_identity('John Smith')
-        # assert u.role == 'manager'
-        # assert u.authenticate('test') is True
-        # assert u.authenticate('false_password') is False
-        print(users)
-        assert 1 == 1
+    def test_authenticate(self, users):
+        u = User.find_by_identity('manager')
+
+        message = "<User Username: {0} Role: {1} Name: {2}".format(u.username, u.role, u.name)
+        assert str(u) == message
+        assert u.authenticate('Fake PASSWORD', use_password=False) is True
+        assert u.authenticate('Fake Password') is False

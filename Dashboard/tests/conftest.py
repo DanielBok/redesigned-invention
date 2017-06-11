@@ -17,7 +17,6 @@ def app():
     }
 
     _app = create_app(settings_override=params)
-
     ctx = _app.app_context()
     ctx.push()
 
@@ -67,22 +66,22 @@ def db(app):
     return _db
 
 
-@pytest.yield_fixture(scope='function')
-def session(db):
-    """
-    Speeds up tests by using rollbacks and nested sessions. Requires that database support SQL savepoints. Postgres
-    does.
-
-    Read more at:
-    http://stackoverflow.com/a/26624146
-    :param db: Pytest Fixture
-    :return: None
-    """
-    db.session.begin_nested()
-
-    yield db.session
-
-    db.session.rollback()
+# @pytest.yield_fixture(scope='function')
+# def session(db):
+#     """
+#     Speeds up tests by using rollbacks and nested sessions. Requires that database support SQL savepoints. Postgres
+#     does.
+#
+#     Read more at:
+#     http://stackoverflow.com/a/26624146
+#     :param db: Pytest Fixture
+#     :return: None
+#     """
+#     db.session.begin_nested()
+#
+#     yield db.session
+#
+#     db.session.rollback()
 
 
 @pytest.fixture(scope='function')
