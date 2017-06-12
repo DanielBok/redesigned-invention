@@ -1,11 +1,11 @@
 import pytest
 
 from Dashboard.app import create_app
-from Dashboard.blueprints.api.models import Drivers
+from Dashboard.blueprints.api.models import Drivers, Tasks, Flights
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db as _db
 from configs.settings import SQLALCHEMY_DATABASE_URI
-from sqlalchemy_utils import Choice
+from .data_for_test import U_all, D_driver, T_tasks, F_flights
 
 
 @pytest.yield_fixture(scope='session')
@@ -48,23 +48,19 @@ def db(app):
     _db.drop_all()
     _db.create_all()
 
-    user_seeds = [{
-        'role': 'manager',
-        'username': 'manager',
-        'password': 'test',
-        'name': 'Roger Federer'
-    }, {
-        'role': 'driver',
-        'username': 'driver',
-        'password': 'test',
-        'name': 'John Smith'
-    }]
-
-    for u in user_seeds:
+    # Add users
+    for u in U_all:
         _db.session.add(User(**u))
 
-    driver_seed = {'name_': 'John Smith', 'task_id': None, 'status': Choice('off', 'Off Work')}
-    _db.session.add(Drivers(**driver_seed))
+    # Add driver
+    _db.session.add(Drivers(**D_driver))
+
+    # Add tasks
+    for t in T_tasks:
+        _db.session.add(Tasks(**t))
+
+    for f in F_flights:
+        _db.session.add(Flights(**f))
 
     _db.session.commit()
 
@@ -98,19 +94,7 @@ def users(db):
     """
     db.session.query(User).delete()
 
-    user_seeds = [{
-        'role': 'manager',
-        'username': 'manager',
-        'password': 'test',
-        'name': 'Roger Federer'
-    }, {
-        'role': 'driver',
-        'username': 'driver',
-        'password': 'test',
-        'name': 'John Smith'
-    }]
-
-    for u in user_seeds:
+    for u in U_all:
         db.session.add(User(**u))
 
     db.session.commit()
