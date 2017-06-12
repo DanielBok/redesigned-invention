@@ -125,11 +125,15 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
     };
 
     $scope.deallocate = (task) => {
+        console.log("deallocate driver: ", task.driver)
+        $scope.updateDeallocatedDriver = task.driver
         $scope.free = task.driver;
         task.driver = null;
     };
 
     $scope.allocate = (task) => {
+        console.log("allocate driver to: " task.task_id)
+        $scope.updateAllocatedTask = task.task_id
         task.driver = $scope.free;
         $scope.free = null;
     };
@@ -139,6 +143,23 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
     };
 
     $scope.submit = () => {
+        let payload = {
+            name: $scope.updateDeallocatedDriver,
+            activity: "update"
+            target: $scope.updateAllocatedTask
+        }
+        $scope.toggleEdit();
+        $http.post(api('drivers'), payload).then(
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.error('error', err);
+            }
+        );
+    };
+
+    $scope.cancel = () => {
         $scope.toggleEdit();
     };
 
