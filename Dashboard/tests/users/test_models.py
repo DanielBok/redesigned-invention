@@ -2,7 +2,7 @@ from Dashboard.blueprints.user.models import User
 from utils.tests_helpers import TestMixin
 
 
-class TestUser(TestMixin):
+class TestModels(TestMixin):
     def test_authenticate(self, users):
         u = User.find_by_identity('manager')
 

@@ -3,7 +3,7 @@ from flask import url_for
 from utils.tests_helpers import TestMixin, AssertsMixin
 
 
-class TestUsers(TestMixin, AssertsMixin):
+class TestViews(TestMixin, AssertsMixin):
     def test_index_redirect(self):
         response = self.client.get(url_for('user.index'))
         target = url_for('user.login')
