@@ -32,11 +32,12 @@ class TestMixin(object):
         """
         user = {
             'identity': identity,
-            'password': password
+            'password': password,
+            'next': kwargs.get('next', None)
         }
         user.update(kwargs)
 
-        response = self.client.post(url_for('user.login'), data=user, follow_redirects=follow_redirects, )
+        response = self.client.post(url_for('user.login'), data=user, follow_redirects=follow_redirects)
 
         return response
 
