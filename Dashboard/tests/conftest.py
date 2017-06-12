@@ -1,9 +1,11 @@
 import pytest
 
 from Dashboard.app import create_app
+from Dashboard.blueprints.api.models import Drivers
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db as _db
 from configs.settings import SQLALCHEMY_DATABASE_URI
+from sqlalchemy_utils import Choice
 
 
 @pytest.yield_fixture(scope='session')
@@ -60,6 +62,9 @@ def db(app):
 
     for u in user_seeds:
         _db.session.add(User(**u))
+
+    driver_seed = {'name_': 'John Smith', 'task_id': None, 'status': Choice('off', 'Off Work')}
+    _db.session.add(Drivers(**driver_seed))
 
     _db.session.commit()
 
