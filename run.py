@@ -2,6 +2,7 @@ import argparse
 import os
 import subprocess
 from os import getenv
+from shutil import copy2
 
 import cherrypy
 
@@ -17,6 +18,11 @@ def make_parser():
                    help='Run in production. [Default: False, development mode]')
 
     p.add_argument('-b', '--build',
+                   help='Build commands for Dashboard App',
+                   action='store_true')
+
+    p.add_argument('-pph', '--pre-push-hook',
+                   help='Add git pre-push hook',
                    action='store_true')
 
     return p
@@ -30,6 +36,11 @@ if __name__ == '__main__':
 
     if args.build:
         subprocess.call('pip install --editable .', shell=True)
+        exit(0)
+
+    if args.pre_push_hook:
+        copy2('configs/pre-push', '.git/hooks/pre-push')
+        print('Copied pre-push hook over to git hooks folder')
         exit(0)
 
     if args.production:

@@ -1,6 +1,10 @@
 import os
 import subprocess
+from os.path import join
+
 import click
+
+from configs.settings import ROOT_FOLDER
 
 
 @click.command()
@@ -19,10 +23,13 @@ def cli(path, cov, pushing):
     else:
         cmd = "pytest {0}".format(path)
 
-    # out = os.system(cmd)
-    # out = subprocess.check_output(cmd.split(), shell=True)
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    output, err = p.communicate()
+    if pushing:
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        output, err = p.communicate()
 
-    with open('test_results.txt', 'w') as f:
-        f.write(output.decode('utf-8'))
+        with open('test_results.txt', 'w') as f:
+            f.write(output.decode('utf-8'))
+
+    else:
+        subprocess.call(cmd, shell=True)
+    os.remove(join(ROOT_FOLDER, '.coverage'))
