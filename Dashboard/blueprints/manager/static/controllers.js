@@ -132,7 +132,7 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
     };
 
     $scope.allocate = (task) => {
-        console.log("allocate driver to: " task.task_id)
+        console.log("allocate driver to: ", task.task_id)
         $scope.updateAllocatedTask = task.task_id
         task.driver = $scope.free;
         $scope.free = null;
@@ -145,9 +145,9 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
     $scope.submit = () => {
         let payload = {
             name: $scope.updateDeallocatedDriver,
-            activity: "update"
+            activity: "update",
             target: $scope.updateAllocatedTask
-        }
+        };
         $scope.toggleEdit();
         $http.post(api('drivers'), payload).then(
             (res) => {
