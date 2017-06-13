@@ -7,7 +7,7 @@ from flask_login import current_user
 def _redirect(user):
     role = user.role.code
     if not role:
-        role = 'user'
+        return redirect(url_for('user.logout'))
     return redirect(url_for('{role}.index'.format(role=role)))
 
 

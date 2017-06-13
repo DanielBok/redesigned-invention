@@ -10,3 +10,4 @@ SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URL',
                                  "sqlite:///{0}".format(abspath(join(dirname(__file__), '..', 'app_data', 'data.db'))))
 TIMEZONE = 'Asia/Singapore'
 SERVER_NAME = getenv('SERVER_NAME', 'localhost:5000')
+ROOT_FOLDER = abspath(join(dirname(__file__), '..'))
