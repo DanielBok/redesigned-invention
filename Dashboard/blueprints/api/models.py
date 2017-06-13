@@ -93,7 +93,7 @@ class Drivers(ResourceMixin, db.Model):
 
     def update_task(self, newTask_id):
         task = Tasks.get_task_by_id(self.task_id) # get old task id
-        task.complete_task()
+        task.return_task()
 
         self.task_id = newTask_id # set new task
         self.status = Choice('on', 'On Task')
@@ -101,7 +101,6 @@ class Drivers(ResourceMixin, db.Model):
         newTask = Tasks.get_task_by_id(newTask_id)
         newTask.do_task(self)
 
-        task.return_task()
         return self.save()
 
     def stop_work(self, type_: str):
@@ -191,6 +190,7 @@ class Tasks(ResourceMixin, db.Model):
 
     def return_task(self):
         self.status = Choice('ready', 'Ready')
+        self.driver = None
         return self.save()
 
     def complete_task(self):

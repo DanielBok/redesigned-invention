@@ -163,11 +163,13 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
         $scope.toggleEdit();
     };
 
-    $scope.loadTaskBoard();
+    //$scope.loadTaskBoard();
 
-    // $interval(function() {
-    //     $scope.loadTaskBoard();
-    // }, 5000);
+    $interval(function() {
+    	if (!$scope.editing){
+    		$scope.loadTaskBoard();
+    	}
+     }, 5000);
 
 });
 
