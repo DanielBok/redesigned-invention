@@ -105,3 +105,4 @@ SECRET.ENV
 logs.txt
 *.Rhistory
 app_data/*.db
+test_results.txt

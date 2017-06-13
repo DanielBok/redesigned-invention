@@ -195,10 +195,10 @@ class Tasks(ResourceMixin, db.Model):
         return self.save()
 
     @classmethod
-    def get_first_task(cls) -> 'Tasks':
+    def get_first_task(cls, forecast=1) -> 'Tasks':
         return (Tasks.query
-                .filter((Tasks.ready_time <= now() + td(hours=24)) &
-                        (Tasks.status == Choice('ready', 'Ready')))
+                .filter((Tasks.ready_time <= now() + td(hours=forecast)) &
+                       (Tasks.status == Choice('ready', 'Ready')))
                 .order_by(Tasks.ready_time)
                 .first())
 

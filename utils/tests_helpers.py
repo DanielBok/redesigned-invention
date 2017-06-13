@@ -8,6 +8,11 @@ class AssertsMixin:
         assert response.status_code == status_code
         assert message in str(response.data)
 
+    @staticmethod
+    def assert_redirect(origin: Response, target_location: str):
+        assert origin.status_code == 302
+        assert origin.location == target_location
+
 
 class TestMixin(object):
     """
@@ -16,30 +21,31 @@ class TestMixin(object):
     """
 
     @pytest.fixture(autouse=True)
-    def set_common_fixtures(self, client):
-        # self.session = session
+    def set_common_fixtures(self, client, drivers, tasks):
         self.client = client
+        self.drivers = drivers
+        self.tasks = tasks
 
-    def login(self, identity='Roger Federer', password='test') -> Response:
+    def login(self, identity='manager', password='test', follow_redirects=True, **kwargs) -> Response:
         """
         Login a specific user.
-
         :return: Flask response
         """
         user = {
             'identity': identity,
-            'password': password
+            'password': password,
+            'next': kwargs.get('next', None)
         }
+        user.update(kwargs)
 
-        response = self.client.post(url_for('user.login'), data=user, follow_redirects=True)
+        response = self.client.post(url_for('user.login'), data=user, follow_redirects=follow_redirects)
 
         return response
 
-    def logout(self) -> Response:
+    def logout(self, follow_redirects=True) -> Response:
         """
         Logout a specific user.
-
         :return: Flask response
         """
-        response = self.client.get(url_for('user.logout'), follow_redirects=True)
+        response = self.client.get(url_for('user.logout'), follow_redirects=follow_redirects)
         return response

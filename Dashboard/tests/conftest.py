@@ -1,9 +1,11 @@
 import pytest
 
 from Dashboard.app import create_app
+from Dashboard.blueprints.api.models import Drivers, Tasks, Flights
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db as _db
 from configs.settings import SQLALCHEMY_DATABASE_URI
+from .data_for_test import U_all, D_drivers, T_tasks, F_flights
 
 
 @pytest.yield_fixture(scope='session')
@@ -17,7 +19,6 @@ def app():
     }
 
     _app = create_app(settings_override=params)
-
     ctx = _app.app_context()
     ctx.push()
 
@@ -47,68 +48,45 @@ def db(app):
     _db.drop_all()
     _db.create_all()
 
-    user_seeds = [{
-        'role': 'manager',
-        'username': 'manager',
-        'password': 'test',
-        'name': 'Roger Federer'
-    }, {
-        'role': 'driver',
-        'username': 'driver',
-        'password': 'test',
-        'name': 'John Smith'
-    }]
-
-    for u in user_seeds:
+    # Add users
+    for u in U_all:
         _db.session.add(User(**u))
+
+    # Add driver
+    for d in D_drivers:
+        _db.session.add(Drivers(**d))
+
+    # Add tasks
+    for t in T_tasks:
+        _db.session.add(Tasks(**t))
+
+    for f in F_flights:
+        _db.session.add(Flights(**f))
 
     _db.session.commit()
 
     return _db
 
 
-@pytest.yield_fixture(scope='function')
-def session(db):
-    """
-    Speeds up tests by using rollbacks and nested sessions. Requires that database support SQL savepoints. Postgres
-    does.
-
-    Read more at:
-    http://stackoverflow.com/a/26624146
-    :param db: Pytest Fixture
-    :return: None
-    """
-    db.session.begin_nested()
-
-    yield db.session
-
-    db.session.rollback()
-
-
 @pytest.fixture(scope='function')
-def users(db):
-    """
-    Create user fixtures. They reset per test
-    :param db: PyTest Fixture
-    :return: SQLAlchemy database session
-    """
-    db.session.query(User).delete()
+def tasks(db):
+    yield db
 
-    user_seeds = [{
-        'role': 'manager',
-        'username': 'manager',
-        'password': 'test',
-        'name': 'Roger Federer'
-    }, {
-        'role': 'driver',
-        'username': 'driver',
-        'password': 'test',
-        'name': 'John Smith'
-    }]
+    db.session.query(Tasks).delete()
 
-    for u in user_seeds:
-        db.session.add(User(**u))
+    for t in T_tasks:
+        db.session.add(Tasks(**t))
 
     db.session.commit()
 
-    return db
+
+@pytest.fixture(scope='function')
+def drivers(db):
+    yield db
+
+    db.session.query(Drivers).delete()
+
+    for d in D_drivers:
+        db.session.add(Drivers(**d))
+
+    db.session.commit()

@@ -26,6 +26,10 @@ class User(UserMixin, ResourceMixin, db.Model):
         super(User, self).__init__(**kwargs)
         self.password = User.encrypt_password(kwargs.get('password', 'airport'))
 
+    def __str__(self):
+        message = "<User Username: {0} Role: {1} Name: {2}".format(self.username, self.role, self.name)
+        return message
+
     def authenticate(self, password='', use_password=True):
         if use_password:
             return check_password_hash(self.password, password)

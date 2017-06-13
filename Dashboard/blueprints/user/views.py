@@ -11,8 +11,9 @@ from .models import User
 user = Blueprint('user', __name__, template_folder='templates')
 
 
-def _redirect(url):
-    return redirect(urljoin(request.host_url, url))
+def _redirect(role, *url):
+    red_url = (role + '/' + '/'.join(url)).lower()
+    return redirect(urljoin(request.host_url, red_url))
 
 
 @user.route('/')
@@ -30,10 +31,12 @@ def login():
         if u and u.authenticate(request.form.get('password')):
             if login_user(u, remember=True):
                 next_url = request.form.get('next')
-                if next_url:
-                    return _redirect(next_url)
+                role = u.role.value
 
-                if u.role.value == 'Manager':
+                if next_url:
+                    return _redirect(role, next_url)
+
+                if role == 'Manager':
                     return redirect(url_for('manager.index'))
                 else:
                     Drivers.get_by_identity(u.name).ready()

@@ -63,24 +63,24 @@ def taskboard():
     return render_template('manager/taskboard.html', **payload)
 
 
-@managers.route('/make_csv', methods=['POST'])
-def make_csv():
-    _data = request.form
-    data = json.loads(_data['data'])
-
-    print(data)
-    csv = ""
-
-    for d in data:
-        if len(csv) == 0:
-            csv += ','.join(i.title() for i in d.keys()) + '\n'
-        csv += ','.join(str(i) for i in d.values()) + '\n'
-
-    resp = make_response(csv)
-    resp.headers["Content-Disposition"] = "attachment; filename={name}.csv".format(name=_data['name'])
-    resp.headers["Content-type"] = "text/csv"
-
-    return resp
+# @managers.route('/make_csv', methods=['POST'])
+# def make_csv():
+#     _data = request.form
+#     data = json.loads(_data['data'])
+#
+#     print(data)
+#     csv = ""
+#
+#     for d in data:
+#         if len(csv) == 0:
+#             csv += ','.join(i.title() for i in d.keys()) + '\n'
+#         csv += ','.join(str(i) for i in d.values()) + '\n'
+#
+#     resp = make_response(csv)
+#     resp.headers["Content-Disposition"] = "attachment; filename={name}.csv".format(name=_data['name'])
+#     resp.headers["Content-type"] = "text/csv"
+#
+#     return resp
 
 
 @managers.route('/controller')
