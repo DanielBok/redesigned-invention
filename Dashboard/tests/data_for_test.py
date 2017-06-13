@@ -12,20 +12,23 @@ U_manager = {
     'name': 'Roger Federer'
 }
 
-U_driver = {
-    'role': 'driver',
-    'username': 'driver',
-    'password': 'test',
-    'name': 'John Smith'
-}
+U_drivers = [
+    {'username': 'driver', 'role': 'driver', 'name': 'John Smith', 'password': 'test', },
+    {'username': 'driver0', 'role': 'driver', 'name': 'Stan Mohan', 'password': 'test'},
+    {'username': 'driver1', 'role': 'driver', 'name': 'Ed Hong Weiming', 'password': 'test'},
+    {'username': 'driver2', 'role': 'driver', 'name': 'Tony Khoo', 'password': 'test'},
+    {'username': 'driver3', 'role': 'driver', 'name': 'Roger Shum Cheng Sean', 'password': 'test'}
+]
 
-U_all = [U_manager, U_driver]
+U_all = [U_manager, *U_drivers]
 
-D_driver = {
-    'name_': 'John Smith',
-    'task_id': None,
-    'status': Choice('off', 'Off Work')
-}
+D_drivers = [
+    {'task_id': None, 'name_': 'John Smith', 'status': Choice('off', 'Off Work')},
+    {'task_id': None, 'name_': 'Stan Mohan', 'status': Choice('off', 'Off Work')},
+    {'task_id': None, 'name_': 'Ed Hong Weiming', 'status': Choice('off', 'Off Work')},
+    {'task_id': None, 'name_': 'Tony Khoo', 'status': Choice('off', 'Off Work')},
+    {'task_id': None, 'name_': 'Roger Shum Cheng Sean', 'status': Choice('off', 'Off Work')}
+]
 
 T_tasks = [
     {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51984,
@@ -60,7 +63,7 @@ T_tasks = [
      'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'}
 ]
 
-for i, (j, k) in enumerate(rng.uniform(0, 1, (len(T_tasks), 2))):
+for i, (j, k) in enumerate(rng.uniform(1, 60, (len(T_tasks), 2))):
     T_tasks[i]['ready_time'] += td(minutes=j, seconds=k)
 
 F_flights = [{'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ452', 'pax': 196, 'id': 39840, 'num_containers': 4,
@@ -84,5 +87,5 @@ F_flights = [{'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ452', 'pax': 
              {'actual_time': now(), 'type_': 'A', 'flight_num': 'SQ208', 'pax': 235, 'id': 60450, 'num_containers': 3,
               'terminal': 'T3', 'scheduled_time': now()}]
 
-for i, (j, k) in enumerate(rng.uniform(0, 1, (len(F_flights), 2))):
+for i, (j, k) in enumerate(rng.uniform(1, 60, (len(F_flights), 2))):
     F_flights[i]['scheduled_time'] += td(minutes=j, seconds=k)

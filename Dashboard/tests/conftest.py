@@ -5,7 +5,7 @@ from Dashboard.blueprints.api.models import Drivers, Tasks, Flights
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db as _db
 from configs.settings import SQLALCHEMY_DATABASE_URI
-from .data_for_test import U_all, D_driver, T_tasks, F_flights
+from .data_for_test import U_all, D_drivers, T_tasks, F_flights
 
 
 @pytest.yield_fixture(scope='session')
@@ -53,7 +53,8 @@ def db(app):
         _db.session.add(User(**u))
 
     # Add driver
-    _db.session.add(Drivers(**D_driver))
+    for d in D_drivers:
+        _db.session.add(Drivers(**d))
 
     # Add tasks
     for t in T_tasks:
@@ -67,36 +68,25 @@ def db(app):
     return _db
 
 
-# @pytest.yield_fixture(scope='function')
-# def session(db):
-#     """
-#     Speeds up tests by using rollbacks and nested sessions. Requires that database support SQL savepoints. Postgres
-#     does.
-#
-#     Read more at:
-#     http://stackoverflow.com/a/26624146
-#     :param db: Pytest Fixture
-#     :return: None
-#     """
-#     db.session.begin_nested()
-#
-#     yield db.session
-#
-#     db.session.rollback()
-
-
 @pytest.fixture(scope='function')
-def users(db):
-    """
-    Create user fixtures. They reset per test
-    :param db: PyTest Fixture
-    :return: SQLAlchemy database session
-    """
-    db.session.query(User).delete()
+def tasks(db):
+    yield db
 
-    for u in U_all:
-        db.session.add(User(**u))
+    db.session.query(Tasks).delete()
+
+    for t in T_tasks:
+        db.session.add(Tasks(**t))
 
     db.session.commit()
 
-    return db
+
+@pytest.fixture(scope='function')
+def drivers(db):
+    yield db
+
+    db.session.query(Drivers).delete()
+
+    for d in D_drivers:
+        db.session.add(Drivers(**d))
+
+    db.session.commit()

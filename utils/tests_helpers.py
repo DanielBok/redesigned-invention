@@ -21,9 +21,10 @@ class TestMixin(object):
     """
 
     @pytest.fixture(autouse=True)
-    def set_common_fixtures(self, client, users):
+    def set_common_fixtures(self, client, drivers, tasks):
         self.client = client
-        self.users = users
+        self.drivers = drivers
+        self.tasks = tasks
 
     def login(self, identity='manager', password='test', follow_redirects=True, **kwargs) -> Response:
         """
