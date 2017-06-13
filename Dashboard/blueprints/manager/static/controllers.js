@@ -167,6 +167,7 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
 
     $interval(function() {
     	if (!$scope.editing){
+    		console.log("refresh")
     		$scope.loadTaskBoard();
     	}
      }, 5000);

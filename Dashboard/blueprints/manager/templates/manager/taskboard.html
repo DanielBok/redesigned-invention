@@ -11,8 +11,6 @@
             <div class="row">
                 <button class="btn" ng-show="!editing" ng-click="toggleEdit()">Edit</button>
                 <button class="btn" ng-show="editing" ng-click="submit()">Confirm</button>
-            </div>
-            <div ng-switch-default>
                 <button class="btn" ng-show="editing" ng-click="cancel()">Cancel</button>
             </div>
             <div style="display:none !important">
