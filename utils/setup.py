@@ -62,6 +62,8 @@ def insert_data(_db):
     :return: None
     """
     is_heroku = getenv('IS_HEROKU', 'NO') == 'YES'
+    if is_heroku:
+        print("INFO: Flag is_heroku is {0}. Proceeding to seed database on Heroku".format(is_heroku))
 
     print('Seeding employees and driver tables.')
     # insert employees

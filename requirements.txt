@@ -16,6 +16,7 @@ Jinja2==2.9.6
 MarkupSafe==0.23
 numpy==1.12.1
 pandas==0.20.1
+psycopg2==2.7.1
 py==1.4.34
 pytest==3.1.1
 pytest-cov==2.3.1
@@ -26,3 +27,4 @@ SQLAlchemy==1.1.10
 SQLAlchemy-Utils==0.32.12
 Werkzeug==0.12.2
 WTForms==2.1
+

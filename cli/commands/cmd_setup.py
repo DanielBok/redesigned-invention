@@ -1,5 +1,6 @@
 import subprocess
 from os.path import join
+from shutil import copy2
 
 import click
 
@@ -23,11 +24,32 @@ def freeze(file):
     :return: None
     """
 
-    subprocess.call("pip freeze > {0}".format(file))
+    process = subprocess.Popen("pip freeze".format(file), shell=True, stdout=subprocess.PIPE)
+    out, _ = process.communicate()
 
     with open(join(ROOT_FOLDER, file), 'w+') as f:
-        lines = [l.strip() for l in f.readlines() if not (l.startswith('-e ') and l.endswith('egg=Dashboard_CLI'))]
-        f.writelines(lines)
+        text = ""
+        for line in out.decode('utf-8').split('\n'):
+            line = line.strip()
+            if not (line.startswith('-e ') and line.endswith('egg=Dashboard_CLI')):
+                text += "{0}\n".format(line)
+
+        f.write(text)
+    print("{0} is ready and correct.".format(file))
+
+
+@click.command()
+def push_hook():
+    """
+    Copies the pre-push hook file to .git/hooks folder.
+    pre-push hook runs a test every time before we push to cloud
+    :return: None
+    """
+    source = join(ROOT_FOLDER, 'configs', 'pre-push')
+    destination = join(ROOT_FOLDER, '.git', 'hooks', 'pre-push')
+    copy2(source, destination)
+    print('Copied pre-push hook over to git hooks folder')
 
 
 cli.add_command(freeze)
+cli.add_command(push_hook)

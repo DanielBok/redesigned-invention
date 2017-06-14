@@ -21,8 +21,8 @@ def make_parser():
                    help='Build commands for Dashboard App',
                    action='store_true')
 
-    p.add_argument('-pph', '--pre-push-hook',
-                   help='Add git pre-push hook',
+    p.add_argument('-s', '--seed',
+                   help='Seeds the database in production. Only available if in production',
                    action='store_true')
 
     return p
@@ -38,15 +38,10 @@ if __name__ == '__main__':
         subprocess.call('pip install --editable .', shell=True)
         exit(0)
 
-    if args.pre_push_hook:
-        copy2('configs/pre-push', '.git/hooks/pre-push')
-        print('Copied pre-push hook over to git hooks folder')
-        exit(0)
+    if args.seed and getenv('RESET_DATABASE', "0") == "1":
+        seed(app)
 
     if args.production:
-
-        if getenv('RESET_DATABASE', "0") == "1":
-            seed(app)
 
         port = int(getenv('PORT', 5000))
 
