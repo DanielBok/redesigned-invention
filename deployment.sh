@@ -30,7 +30,8 @@ sudo chown -R ${SSH_USER}:${SSH_USER} ${DIRECTORY}
 
 function git_remote_add () {
     echo "Setting up git remotes..."
-    local REMOTE="ssh://${SSH_USER}@${SERVER_IP}:/var/www/${APP_NAME}.git"
+#    local REMOTE="ssh://${SSH_USER}@${SERVER_IP}:/var/www/${APP_NAME}.git"
+    local REMOTE="git@${SERVER_IP}:/var/www/${APP_NAME}.git"
     git remote remove production
     git remote add production ${REMOTE}
     echo "Done!"
