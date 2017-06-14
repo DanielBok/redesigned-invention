@@ -30,6 +30,8 @@ dashboard test --cov  # runs unit tests with coverage
 ```
 dashboard setup push_hook  # setup pre-push hook
 dashboard setup freeze  # prints a heroku ready requirements.txt
+
+git push <remote> <branch>
 ```
 
 We set up the `prepush` hook to run all the unit tests before pushing to a cloud repo. This ensures that we don't push up stuff which have errors

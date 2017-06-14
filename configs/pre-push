@@ -14,7 +14,6 @@ printf "\n\n"
 if [[ -z $results ]]; then
 	echo  "TEST STATUS: PASSED" 
 	rm test_results.txt
-	dashboard setup freeze
 else
 	echo  "TEST STATUS: FAILED"
 	rm test_results.txt
