@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# unset GIT_INDEX_FILE
+
+REPO_NAME="Pronto"
+REPO_NAME_LOWER="pronto"
+APP_NAME="app"
+
+# Check out the newest version of the code.
+GIT_WORK_TREE="/var/www/${REPO_NAME}"
+
+# Force checkout. Throw away local changes.
+git --work-tree=${GIT_WORK_TREE} --git-dir=${GIT_WORK_TREE}.git checkout -f
+
+cd ${GIT_WORK_TREE}
+
+source activate web
+
+conda install -y --file requirements.txt
+
+python run.py -p
