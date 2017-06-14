@@ -21,10 +21,6 @@ def make_parser():
                    help='Build commands for Dashboard App',
                    action='store_true')
 
-    p.add_argument('-s', '--seed',
-                   help='Seeds the database in production. Only available if in production',
-                   action='store_true')
-
     return p
 
 
@@ -37,11 +33,6 @@ if __name__ == '__main__':
     if args.build:
         subprocess.call('pip install --editable .', shell=True)
         exit(0)
-
-    if args.seed and getenv('RESET_DATABASE', "0") == "1":
-        seed(app)
-        os.environ['RESET_DATABASE'] = "0"
-        exit(1)
 
     if args.production:
 

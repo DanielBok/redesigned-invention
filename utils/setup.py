@@ -63,9 +63,6 @@ def insert_data(_db):
     :param _db: SQLAlchemy db context
     :return: None
     """
-    is_heroku = getenv('IS_HEROKU', 'NO') == 'YES'
-    if is_heroku:
-        print("INFO: Flag is_heroku is {0}. Proceeding to seed database on Heroku".format(is_heroku))
 
     print('Seeding employees and driver tables.')
     # insert employees
@@ -88,9 +85,6 @@ def insert_data(_db):
             })
             names.append(name)
 
-            if is_heroku and c >= 20:
-                break
-
     for e in ProgressEnumerate(employees):
         if not User.find_by_identity(e['username']):
             _db.session.add(User(**e))
@@ -100,9 +94,6 @@ def insert_data(_db):
 
     print('Seeding Flights and Tasks table')
     df = pd.DataFrame(pd.read_pickle(join(APP_DATA, 'flights.p')))
-
-    if is_heroku:
-        df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)
 
     df.rename(columns={
         'FL': 'flight_num',
@@ -158,4 +149,115 @@ def insert_data(_db):
         _db.session.commit()
     except SQLAlchemyError as e:
         _db.session.rollback()
+        print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
+
+
+def heroku_secret_seed():
+    print("Initializing secret seeding", end='\t')
+
+    is_heroku = getenv('IS_HEROKU', "NO")
+    if is_heroku == "NO":
+        print("Not Heroku. Stopping seed")
+        return
+
+    db.drop_all()
+    db.create_all()
+
+    is_heroku = getenv('IS_HEROKU', 'NO') == 'YES'
+    if is_heroku:
+        print("INFO: Flag is_heroku is {0}. Proceeding to seed database on Heroku".format(is_heroku))
+
+    print('Seeding employees and driver tables.')
+    # insert employees
+    employees = [{
+        'role': 'manager',
+        'username': 'manager',
+        'password': 'airport',
+        'name': 'Roger Federer'
+    }]
+
+    names = []
+    with open(join(APP_DATA, 'people.txt')) as f:
+        for c, line in enumerate(f):
+            name = line.strip().split('\t')[0]
+            employees.append({
+                'role': 'driver',
+                'username': 'driver{0:d}'.format(c),
+                'password': 'airport',
+                'name': name
+            })
+            names.append(name)
+
+            if is_heroku and c >= 20:
+                break
+
+    for e in ProgressEnumerate(employees):
+        if not User.find_by_identity(e['username']):
+            db.session.add(User(**e))
+
+        if e['role'] == 'driver' and not Drivers.get_by_identity(e['name']):
+            db.session.add(Drivers(name_=e['name']))
+
+    db.session.commit()
+
+    print('Seeding Flights and Tasks table')
+    df = pd.DataFrame(pd.read_pickle(join(APP_DATA, 'flights.p')))
+
+    if is_heroku:
+        df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)
+
+    df.rename(columns={
+        'FL': 'flight_num',
+        'TER': 'terminal',
+        'TIME': 'scheduled_time',
+        'TYPE': 'type_',
+        'PAX': 'pax',
+        'CONTAINERS': 'num_containers',
+    }, inplace=True)
+
+    df['actual_time'] = df.scheduled_time
+
+    otime = now()
+    time = otime + td(minutes=5)
+    ddf = df.to_dict('records')
+    for e in ProgressEnumerate(ddf):
+        db.session.add(Flights(**e))
+
+        nc = e['num_containers']
+        if nc > 0:
+
+            _containers = [4 for _ in range(nc // 4)]
+            if nc % 4 != 0:
+                _containers.append(nc % 4)
+
+            st = e['scheduled_time']
+            rt = st if e['type_'] == 'A' else st - td(minutes=30)
+            ct = st + td(minutes=rng.triangular(16, 17, 18))
+
+            for c in _containers:
+
+                if e['type_'] == 'A':
+                    source = e['flight_num']
+                    dest = 'HOTA'
+                else:
+                    source = 'HOTA'
+                    dest = e['flight_num']
+
+                task_data = {
+                    'status': 'done' if st <= time else 'ready',
+                    'ready_time': rt,
+                    'completed_time': ct,
+                    'flight_time': st,
+                    'driver': rng.choice(names) if st <= otime else None,
+                    'containers': c,
+                    'source': source,
+                    'destination': dest
+                }
+                db.session.add(Tasks(**task_data))
+
+    try:
+        print("Committing data. This may take a while..")
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
         print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
