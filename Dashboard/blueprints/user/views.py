@@ -20,12 +20,14 @@ def _redirect(role, *url):
 
 @user.route('/')
 def index():
+    print("Redirecting Index")
     return redirect(url_for('.login'))
 
 
 @user.route('/login', methods=['GET', 'POST'])
 @anonymous_required()
 def login():
+    print('Down Here')
     form = LoginForm(next_page=request.args.get('next'))
 
     if form.validate_on_submit():
