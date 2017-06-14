@@ -11,6 +11,6 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        Dashboard=cli.cli:cli
+        dashboard=cli.cli:cli
     """
 )

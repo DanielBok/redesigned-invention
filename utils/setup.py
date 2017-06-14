@@ -83,12 +83,17 @@ def insert_data(_db):
             })
             names.append(name)
 
+    count = 0
     for e in ProgressEnumerate(employees):
         if not User.find_by_identity(e['username']):
             _db.session.add(User(**e))
 
         if e['role'] == 'driver' and not Drivers.get_by_identity(e['name']):
             _db.session.add(Drivers(name_=e['name']))
+
+        if count % 250 == 0:
+            _db.session.commit()
+        count += 1
 
     print('Seeding Flights and Tasks table')
     df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
@@ -141,6 +146,10 @@ def insert_data(_db):
                     'destination': dest
                 }
                 _db.session.add(Tasks(**task_data))
+
+                if count % 250 == 0:
+                    _db.session.commit()
+                count += 1
 
     try:
         print("Committing data. This may take a while..")
