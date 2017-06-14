@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime
-from sqlalchemy.types import TypeDecorator
+from sqlalchemy.types import TypeDecorator, DateTime
 
 from Dashboard.extensions import db
 

@@ -28,6 +28,7 @@ app = create_app()
 if __name__ == '__main__':
     parser = make_parser()
     args = parser.parse_args()
+    print(args)
 
     if args.build:
         subprocess.call('pip install --editable .', shell=True)
@@ -35,9 +36,7 @@ if __name__ == '__main__':
 
     if args.production:
 
-        port = int(getenv('PORT', 5000))
-        app.run('0.0.0.0', port, True)
-
+        port = int(getenv('PORT', 80))
         static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'Dashboard', 'static'))
 
         cherrypy.tree.graft(app, '/')

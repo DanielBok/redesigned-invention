@@ -43,7 +43,9 @@ function setup () {
 
 function copy_post_receive () {
     echo "Copying post receive from present location to server"
-    scp -i  "${IDENTITY_FILE}" "./configs/post-receive" "${SSH_SERVER}:/var/www/${APP_NAME}.git/hooks/post-receive"
+    sed -e 's/^M//g' ./configs/post-receive > ./configs/temp
+    scp -i  "${IDENTITY_FILE}" ./configs/temp "${SSH_SERVER}:/var/www/${APP_NAME}.git/hooks/post-receive"
+    rm ./configs/temp
     echo "Done"
 }
 

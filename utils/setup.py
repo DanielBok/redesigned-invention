@@ -83,80 +83,9 @@ def insert_data(_db):
             })
             names.append(name)
 
-    count = 0
-    for e in ProgressEnumerate(employees):
-        if not User.find_by_identity(e['username']):
-            _db.session.add(User(**e))
+    _seed_users_and_workers(_db, employees)
 
-        if e['role'] == 'driver' and not Drivers.get_by_identity(e['name']):
-            _db.session.add(Drivers(name_=e['name']))
-
-        if count % 250 == 0:
-            _db.session.commit()
-        count += 1
-
-    print('Seeding Flights and Tasks table')
-    df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
-
-    df.rename(columns={
-        'FL': 'flight_num',
-        'TER': 'terminal',
-        'TIME': 'scheduled_time',
-        'TYPE': 'type_',
-        'PAX': 'pax',
-        'CONTAINERS': 'num_containers',
-    }, inplace=True)
-
-    df['actual_time'] = df.scheduled_time
-
-    otime = now()
-    time = otime + td(minutes=5)
-    ddf = df.to_dict('records')
-    for e in ProgressEnumerate(ddf):
-        _db.session.add(Flights(**e))
-
-        nc = e['num_containers']
-        if nc > 0:
-
-            _containers = [4 for _ in range(nc // 4)]
-            if nc % 4 != 0:
-                _containers.append(nc % 4)
-
-            st = e['scheduled_time']
-            rt = st if e['type_'] == 'A' else st - td(minutes=30)
-            ct = st + td(minutes=rng.triangular(16, 17, 18))
-
-            for c in _containers:
-
-                if e['type_'] == 'A':
-                    source = e['flight_num']
-                    dest = 'HOTA'
-                else:
-                    source = 'HOTA'
-                    dest = e['flight_num']
-
-                task_data = {
-                    'status': 'done' if st <= time else 'ready',
-                    'ready_time': rt,
-                    'completed_time': ct,
-                    'flight_time': st,
-                    'driver': rng.choice(names) if st <= otime else None,
-                    'containers': c,
-                    'source': source,
-                    'destination': dest
-                }
-                _db.session.add(Tasks(**task_data))
-
-                if count % 250 == 0:
-                    _db.session.commit()
-                count += 1
-
-    try:
-        print("Committing data. This may take a while..")
-        _db.session.commit()
-    except SQLAlchemyError as e:
-        _db.session.rollback()
-        print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
+    _seed_flights_and_task(_db, names)
 
 
 def secret_seed():
@@ -189,19 +118,39 @@ def secret_seed():
             if c >= 20:
                 break
 
+    _seed_users_and_workers(db, employees)
+
+    _seed_flights_and_task(db, names, 7)
+
+
+def _seed_users_and_workers(_db, employees: list):
+    count = 0
     for e in ProgressEnumerate(employees):
         if not User.find_by_identity(e['username']):
-            db.session.add(User(**e))
+            _db.session.add(User(**e))
 
         if e['role'] == 'driver' and not Drivers.get_by_identity(e['name']):
-            db.session.add(Drivers(name_=e['name']))
+            _db.session.add(Drivers(name_=e['name']))
 
-    db.session.commit()
+        if count % 250 == 0:
+            _db.session.commit()
+        count += 1
 
+    try:
+        print("Committing data. This may take a while..")
+        _db.session.commit()
+    except SQLAlchemyError as e:
+        _db.session.rollback()
+        print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
+
+
+def _seed_flights_and_task(_db, names: list, limiter=-1.0):
     print('Seeding Flights and Tasks table')
+    count = 0
     df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
 
-    df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)
+    if limiter > 0:
+        df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=limiter))].reset_index(drop=True)
 
     df.rename(columns={
         'FL': 'flight_num',
@@ -210,15 +159,17 @@ def secret_seed():
         'TYPE': 'type_',
         'PAX': 'pax',
         'CONTAINERS': 'num_containers',
+        "BAY": 'bay'
     }, inplace=True)
 
-    df['actual_time'] = df.scheduled_time
+    mixture = rng.normal(-2.5, 3, len(df)) + rng.normal(2.5, 3, len(df))
+    df['actual_time'] = [t + td(minutes=m) for t, m in zip(df.scheduled_time, mixture)]
 
     otime = now()
     time = otime + td(minutes=5)
     ddf = df.to_dict('records')
     for e in ProgressEnumerate(ddf):
-        db.session.add(Flights(**e))
+        _db.session.add(Flights(**e))
 
         nc = e['num_containers']
         if nc > 0:
@@ -227,34 +178,61 @@ def secret_seed():
             if nc % 4 != 0:
                 _containers.append(nc % 4)
 
-            st = e['scheduled_time']
-            rt = st if e['type_'] == 'A' else st - td(minutes=30)
-            ct = st + td(minutes=rng.triangular(16, 17, 18))
+            at = e['actual_time']
+
+            if e['type_'] == 'A':
+                source = e['flight_num']
+                dest = e['terminal'] + 'HOT'
+                rt = at + td(minutes=rng.triangular(1, 1.8, 3))
+            else:
+                source = e['terminal'] + 'HOT'
+                dest = e['flight_num']
+                rt = at - td(minutes=35)
+
+            ts = rt + td(minutes=rng.uniform(0, 1.5))
+            ct = ts + td(minutes=rng.triangular(16, 17, 18))
+
+            ttt = None
+            if at <= time:
+                status = 'done'
+                driver = rng.choice(names)
+                ttt = (ct - ts).total_seconds()
+            elif ct > now():
+                status = 'er'
+                driver = rng.choice(names)
+                ct = None
+            else:
+                status = 'ready'
+                ct = None
+                if at <= otime:
+                    driver = rng.choice(names)
+                else:
+                    driver = None
 
             for c in _containers:
 
-                if e['type_'] == 'A':
-                    source = e['flight_num']
-                    dest = 'HOTA'
-                else:
-                    source = 'HOTA'
-                    dest = e['flight_num']
-
                 task_data = {
-                    'status': 'done' if st <= time else 'ready',
+                    'status': status,
                     'ready_time': rt,
                     'completed_time': ct,
-                    'flight_time': st,
-                    'driver': rng.choice(names) if st <= otime else None,
+                    'flight_time': at,
+                    'driver': driver,
                     'containers': c,
                     'source': source,
-                    'destination': dest
+                    'destination': dest,
+                    'bay': e['bay'],
+                    'task_start_time': ts,
+                    'task_time_taken': ttt
                 }
-                db.session.add(Tasks(**task_data))
+                _db.session.add(Tasks(**task_data))
+
+                if count % 250 == 0:
+                    _db.session.commit()
+                count += 1
 
     try:
         print("Committing data. This may take a while..")
-        db.session.commit()
+        _db.session.commit()
     except SQLAlchemyError as e:
-        db.session.rollback()
+        _db.session.rollback()
         print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)

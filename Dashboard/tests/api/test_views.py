@@ -82,7 +82,6 @@ class TestViews(TestMixin, AssertsMixin):
                                     content_type="application/json")
 
         data = json.loads(response.data.decode('utf-8'))
-        print(data)
 
         assert len({'task', 'driver'} - set(data.keys())) == 0
         assert type(data['task']) == dict

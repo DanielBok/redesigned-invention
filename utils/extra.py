@@ -1,4 +1,14 @@
+import sys
 from os.path import join, abspath, dirname
+from socket import gethostbyname_ex, gethostname
+
+
+def get_ip_address():
+    for ip in gethostbyname_ex(gethostname())[2]:
+        initial = int(ip.split('.')[0])
+        if 0 < initial < 192:
+            return ip
+    return 'localhost'
 
 
 def ProgressEnumerate(iterable, length=50):
@@ -17,6 +27,7 @@ def ProgressEnumerate(iterable, length=50):
                 '\t'
             )
             print(msg, end='\r')
+            sys.stdout.flush()
         else:
             print("Complete: [{0}]\t 100%{1}".format(length * '#', '\t' * 5))
 

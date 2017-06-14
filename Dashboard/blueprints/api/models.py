@@ -4,8 +4,8 @@ from numpy import random as rng
 from sqlalchemy_utils.types import ChoiceType, Choice
 
 from Dashboard.extensions import db
-from utils.mixins import ResourceMixin, AwareDateTime
 from utils.datetime import now
+from utils.mixins import ResourceMixin, AwareDateTime
 
 
 class Flights(ResourceMixin, db.Model):
@@ -26,9 +26,21 @@ class Flights(ResourceMixin, db.Model):
     type_ = db.Column(ChoiceType(TYPES), nullable=False)
     pax = db.Column(db.Integer, nullable=False, default=0)
     num_containers = db.Column(db.Integer, nullable=False, default=0)
+    bay = db.Column(db.String(5), nullable=False)
 
     def __init__(self, **kwargs):
         super(Flights, self).__init__(**kwargs)
+
+    def to_dict(self):
+        return {
+            'flight_num': self.flight_num,
+            'terminal': self.terminal,
+            'scheduled_time': self.scheduled_time,
+            'type': self.type_.value,
+            'containers': self.num_containers,
+            'actual_time': self.actual_time,
+            'bay': self.bay
+        }
 
     @classmethod
     def update_arrival_time(cls):
@@ -46,9 +58,7 @@ class Flights(ResourceMixin, db.Model):
         results = Flights.query.filter(
             (Flights.scheduled_time >= start) & (Flights.scheduled_time <= start + td(hours=forecast))).all()
 
-        return [{'flight_num': i.flight_num, 'terminal': i.terminal, 'scheduled_time': i.scheduled_time,
-                 'type': i.type_.value, 'containers': i.num_containers, 'actual_time': i.actual_time}
-                for i in results]
+        return [i.to_dict() for i in results]
 
 
 class Drivers(ResourceMixin, db.Model):
@@ -93,14 +103,12 @@ class Drivers(ResourceMixin, db.Model):
         return self.save()
 
     def update_task(self, new_task_id):
-        task = Tasks.get_task_by_id(self.task_id) # get old task id
-        task.return_task()
+        Tasks.get_task_by_id(self.task_id).return_task()  # get old task id
 
-        self.task_id = new_task_id # set new task
+        self.task_id = new_task_id  # set new task
         self.status = Choice('on', 'On Task')
 
-        newTask = Tasks.get_task_by_id(new_task_id)
-        newTask.do_task(self)
+        Tasks.get_task_by_id(new_task_id).do_task(self)
 
         return self.save()
 
@@ -154,13 +162,18 @@ class Tasks(ResourceMixin, db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     status = db.Column(ChoiceType(STATUSES), nullable=False, index=True, default='ready')
     ready_time = db.Column(AwareDateTime(), index=True)
-    completed_time = db.Column(AwareDateTime(), index=True)
     flight_time = db.Column(AwareDateTime(), index=True)
+
+    # Performance Info
+    task_start_time = db.Column(AwareDateTime(), index=True)
+    completed_time = db.Column(AwareDateTime(), index=True)
+    task_time_taken = db.Column(db.Integer(), default=-1)
 
     # Containers info
     source = db.Column(db.String(10), nullable=False)
     destination = db.Column(db.String(10), nullable=False)
     containers = db.Column(db.Integer, nullable=False, index=True)
+    bay = db.Column(db.String(5), nullable=False)
 
     # Driver details
     driver = db.Column(db.String(50), nullable=True)
@@ -172,8 +185,8 @@ class Tasks(ResourceMixin, db.Model):
         msg = 'TASK DATA\n' + '\n'.join("{0}\t {1}".format(str(k), str(v)) for k, v in self.to_dict().items())
         return msg
 
-    def to_dict(self):
-        return {
+    def to_dict(self, purpose="driver"):
+        payload = {
             'task_id': self.id,
             'ready_time': self.ready_time,
             'flight_time': self.flight_time,
@@ -184,19 +197,30 @@ class Tasks(ResourceMixin, db.Model):
             'driver': self.driver
         }
 
+        if purpose == "stats":
+            payload.update({
+                "completed_time": self.completed_time,
+                "time_taken": self.task_time_taken
+            })
+        return payload
+
     def do_task(self, driver: Drivers):
         self.driver = driver.name_
         self.status = Choice('er', 'En-route')
+        self.task_start_time = now()
         return self.save()
 
     def return_task(self):
         self.status = Choice('ready', 'Ready')
         self.driver = None
+        self.task_start_time = None
         return self.save()
 
     def complete_task(self):
         self.status = Choice('done', 'Done')
         self.completed_time = now()
+        self.save()
+        self.task_time_taken = (self.completed_time - self.task_start_time).total_seconds()
         return self.save()
 
     @classmethod
@@ -219,11 +243,11 @@ class Tasks(ResourceMixin, db.Model):
         if stop is None:
             stop = now()
         records = (Tasks.query
-                .filter(((Tasks.ready_time >= start) &
-                        (Tasks.ready_time <= stop)) |
-                        (Tasks.status == Choice('er', 'En-route')))
-                .order_by(Tasks.ready_time)
-                .all())
+                   .filter(((Tasks.ready_time >= start) &
+                            (Tasks.ready_time <= stop)) |
+                           (Tasks.status == Choice('er', 'En-route')))
+                   .order_by(Tasks.ready_time)
+                   .all())
         return [t.to_dict() for t in records]
 
     @classmethod

@@ -18,4 +18,8 @@ source activate web
 
 conda install -y --file requirements.txt
 
+echo "Killing all past processes"
+kill $(ps -aux | grep "python run.py" | awk '{print $2'})
+
+echo "Finished kills. Starting new process"
 python run.py -p &

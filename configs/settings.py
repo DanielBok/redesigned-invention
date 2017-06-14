@@ -2,7 +2,7 @@ import os
 from os import getenv
 from os.path import abspath, dirname, join
 
-DEBUG = getenv('DEBUG', True)
+DEBUG = getenv('DEBUG', "YES") == "YES"
 DEBUG_TB_INTERCEPT_REDIRECTS = getenv('DEBUG_TB_INTERCEPT_REDIRECTS', False)
 SECRET_KEY = getenv('SECRET_KEY', os.urandom(128).hex())
 SQLALCHEMY_TRACK_MODIFICATIONS = False
