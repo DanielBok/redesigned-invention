@@ -37,15 +37,16 @@ if __name__ == '__main__':
     if args.production:
 
         port = int(getenv('PORT', 5000))
+        app.run('0.0.0.0', port, True)
 
         static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'Dashboard', 'static'))
 
         cherrypy.tree.graft(app, '/')
         cherrypy.config.update({
             "server.socket_host": "0.0.0.0",
+            "server.socket_port": port,
             "tools.staticdir.on": True,
             "tools.staticdir.dir": static_dir,
-            "server.socket_port": port,
             "engine.autoreload.on": True
         })
 
