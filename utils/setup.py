@@ -23,15 +23,17 @@ def seed(app):
 
     db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', SQLALCHEMY_DATABASE_URI)
 
-    if not database_exists(db_uri):
-        if db_uri.startswith('sqlite'):
-            create_database(db_uri)
+    is_heroku = getenv('IS_HEROKU', "NO")
+    if is_heroku == "NO":
+        if not database_exists(db_uri):
+            if db_uri.startswith('sqlite'):
+                create_database(db_uri)
+            else:
+                message = "Failed to connect to database. Please check if it is provisioned.\n" \
+                          "Database URI = " + db_uri
+                raise Exception(message)
         else:
-            message = "Failed to connect to database. Please check if it is provisioned.\n" \
-                      "Database URI = " + db_uri
-            raise Exception(message)
-    else:
-        print("Database exists. OKAY")
+            print("Database exists. OKAY")
 
     db.app = app
     tables = [
