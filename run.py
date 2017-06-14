@@ -2,7 +2,6 @@ import argparse
 import os
 import subprocess
 from os import getenv
-from shutil import copy2
 
 import cherrypy
 

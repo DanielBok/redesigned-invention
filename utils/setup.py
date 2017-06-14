@@ -1,7 +1,7 @@
 import sys
 from datetime import timedelta as td
 from os import getenv
-from os.path import join, dirname, abspath, exists
+from os.path import join, exists
 
 import pandas as pd
 from numpy import random as rng
@@ -11,11 +11,12 @@ from sqlalchemy_utils import database_exists, create_database
 from Dashboard.blueprints.api.models import Drivers, Flights, Tasks
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db
+from configs.settings import ROOT_FOLDER
 from configs.settings import SQLALCHEMY_DATABASE_URI
 from utils.extra import ProgressEnumerate
 from .datetime import now
 
-APP_DATA = abspath(join(dirname(__file__), '..', 'app_data'))
+APP_DATA = join(ROOT_FOLDER, 'app_data')
 
 
 def seed(app):

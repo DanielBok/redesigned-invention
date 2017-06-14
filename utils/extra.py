@@ -11,7 +11,7 @@ def ProgressEnumerate(iterable, length=50):
                 '#' * bar_length,
                 '-' * (length - bar_length),
                 progress * 100,
-                '\t' * 3
+                '\t'
             )
             print(msg, end='\r')
         else:

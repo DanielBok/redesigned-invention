@@ -1,8 +1,9 @@
 import os
+from os.path import abspath, join, dirname
 import sys
 import click
 
-cmd_folder = os.path.join(os.path.dirname(__file__), 'commands')
+cmd_folder = abspath(join(dirname(__file__), 'commands'))
 cmd_prefix = 'cmd_'
 
 
@@ -30,7 +31,7 @@ class CLI(click.MultiCommand):
         """
 
         ns = {}
-        filename = os.path.join(cmd_folder, cmd_prefix + name + '.py')
+        filename = join(cmd_folder, cmd_prefix + name + '.py')
 
         try:
             with open(filename) as f:
