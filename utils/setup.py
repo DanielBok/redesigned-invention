@@ -1,7 +1,7 @@
 import sys
 from datetime import timedelta as td
 from os import getenv
-from os.path import join, exists
+from os.path import join, exists, abspath, dirname
 
 import pandas as pd
 from numpy import random as rng
@@ -11,12 +11,12 @@ from sqlalchemy_utils import database_exists, create_database
 from Dashboard.blueprints.api.models import Drivers, Flights, Tasks
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db
-from configs.settings import ROOT_FOLDER
 from configs.settings import SQLALCHEMY_DATABASE_URI
 from utils.extra import ProgressEnumerate
 from .datetime import now
+from .extra import get_app_data_path
 
-APP_DATA = join(ROOT_FOLDER, 'app_data')
+
 
 
 def seed(app):
@@ -55,7 +55,7 @@ def seed(app):
 
 
 def local_db_exists():
-    return exists(join(APP_DATA, 'data.db'))
+    return exists(get_app_data_path('data.db'))
 
 
 def insert_data(_db):
@@ -74,8 +74,10 @@ def insert_data(_db):
         'name': 'Roger Federer'
     }]
 
+    file = get_app_data_path('people.txt')
+
     names = []
-    with open(join(APP_DATA, 'people.txt')) as f:
+    with open(file) as f:
         for c, line in enumerate(f):
             name = line.strip().split('\t')[0]
             employees.append({
@@ -94,7 +96,7 @@ def insert_data(_db):
             _db.session.add(Drivers(name_=e['name']))
 
     print('Seeding Flights and Tasks table')
-    df = pd.DataFrame(pd.read_pickle(join(APP_DATA, 'flights.p')))
+    df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
 
     df.rename(columns={
         'FL': 'flight_num',
@@ -178,7 +180,7 @@ def heroku_secret_seed():
     }]
 
     names = []
-    with open(join(APP_DATA, 'people.txt')) as f:
+    with open(get_app_data_path('people.txt')) as f:
         for c, line in enumerate(f):
             name = line.strip().split('\t')[0]
             employees.append({
@@ -202,7 +204,7 @@ def heroku_secret_seed():
     db.session.commit()
 
     print('Seeding Flights and Tasks table')
-    df = pd.DataFrame(pd.read_pickle(join(APP_DATA, 'flights.p')))
+    df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
 
     if is_heroku:
         df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)

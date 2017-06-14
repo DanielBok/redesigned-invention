@@ -3,8 +3,8 @@ from os.path import join
 from shutil import copy2
 
 import click
+from utils.extra import get_root_file
 
-from configs.settings import ROOT_FOLDER
 
 
 @click.group()
@@ -27,7 +27,7 @@ def freeze(file):
     process = subprocess.Popen("pip freeze".format(file), shell=True, stdout=subprocess.PIPE)
     out, _ = process.communicate()
 
-    with open(join(ROOT_FOLDER, file), 'w+') as f:
+    with open(get_root_file(file), 'w+') as f:
         text = ""
         for line in out.decode('utf-8').split('\n'):
             line = line.strip()
@@ -45,8 +45,8 @@ def push_hook():
     pre-push hook runs a test every time before we push to cloud
     :return: None
     """
-    source = join(ROOT_FOLDER, 'configs', 'pre-push')
-    destination = join(ROOT_FOLDER, '.git', 'hooks', 'pre-push')
+    source = join(get_root_file(), 'configs', 'pre-push')
+    destination = join(get_root_file(), '.git', 'hooks', 'pre-push')
     copy2(source, destination)
     print('Copied pre-push hook over to git hooks folder')
 

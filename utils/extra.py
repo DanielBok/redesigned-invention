@@ -1,3 +1,6 @@
+from os.path import join, abspath, dirname
+
+
 def ProgressEnumerate(iterable, length=50):
     _iter = list(iterable)
     end = len(_iter)
@@ -20,3 +23,13 @@ def ProgressEnumerate(iterable, length=50):
     for i, obj in enumerate(iterable):
         _update(i)
         yield obj
+
+
+def get_root_file(file=''):
+    root = abspath(join(dirname(__file__), '..'))
+    return join(root, file) if file else root
+
+
+def get_app_data_path(file=''):
+    app_data = abspath(join(dirname(__file__), '..', 'app_data'))
+    return join(app_data, file) if file else app_data

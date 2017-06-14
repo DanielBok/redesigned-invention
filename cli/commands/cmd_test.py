@@ -3,8 +3,7 @@ import subprocess
 from os.path import join
 
 import click
-
-from configs.settings import ROOT_FOLDER
+from utils.extra import get_root_file
 
 
 @click.command()
@@ -32,4 +31,4 @@ def cli(path, cov, pushing):
 
     else:
         subprocess.call(cmd, shell=True)
-    os.remove(join(ROOT_FOLDER, '.coverage'))
+    os.remove(get_root_file('.coverage'))
