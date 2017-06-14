@@ -18,4 +18,4 @@ source activate web
 
 conda install -y --file requirements.txt
 
-python run.py -p
+python run.py -p &

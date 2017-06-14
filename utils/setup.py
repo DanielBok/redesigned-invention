@@ -1,7 +1,6 @@
 import sys
 from datetime import timedelta as td
-from os import getenv
-from os.path import join, exists, abspath, dirname
+from os.path import exists
 
 import pandas as pd
 from numpy import random as rng
@@ -17,24 +16,20 @@ from .datetime import now
 from .extra import get_app_data_path
 
 
-
-
 def seed(app):
     print("Initializing and seeding utils.", end='\t')
 
     db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', SQLALCHEMY_DATABASE_URI)
 
-    is_heroku = getenv('IS_HEROKU', "NO")
-    if is_heroku == "NO":
-        if not database_exists(db_uri):
-            if db_uri.startswith('sqlite'):
-                create_database(db_uri)
-            else:
-                message = "Failed to connect to database. Please check if it is provisioned.\n" \
-                          "Database URI = " + db_uri
-                raise Exception(message)
+    if not database_exists(db_uri):
+        if db_uri.startswith('sqlite'):
+            create_database(db_uri)
         else:
-            print("Database exists. OKAY")
+            message = "Failed to connect to database. Please check if it is provisioned.\n" \
+                      "Database URI = " + db_uri
+            raise Exception(message)
+    else:
+        print("Database exists. OKAY")
 
     db.app = app
     tables = [
@@ -155,20 +150,11 @@ def insert_data(_db):
         print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
 
 
-def heroku_secret_seed():
+def secret_seed():
     print("Initializing secret seeding", end='\t')
-
-    is_heroku = getenv('IS_HEROKU', "NO")
-    if is_heroku == "NO":
-        print("Not Heroku. Stopping seed")
-        return
 
     db.drop_all()
     db.create_all()
-
-    is_heroku = getenv('IS_HEROKU', 'NO') == 'YES'
-    if is_heroku:
-        print("INFO: Flag is_heroku is {0}. Proceeding to seed database on Heroku".format(is_heroku))
 
     print('Seeding employees and driver tables.')
     # insert employees
@@ -191,7 +177,7 @@ def heroku_secret_seed():
             })
             names.append(name)
 
-            if is_heroku and c >= 20:
+            if c >= 20:
                 break
 
     for e in ProgressEnumerate(employees):
@@ -206,8 +192,7 @@ def heroku_secret_seed():
     print('Seeding Flights and Tasks table')
     df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
 
-    if is_heroku:
-        df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)
+    df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)
 
     df.rename(columns={
         'FL': 'flight_num',

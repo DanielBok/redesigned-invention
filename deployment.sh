@@ -31,6 +31,7 @@ sudo chown -R ${SSH_USER}:${SSH_USER} ${DIRECTORY}
 function git_remote_add () {
     echo "Setting up git remotes..."
     local REMOTE="ssh://${SSH_USER}@${SERVER_IP}:/var/www/${APP_NAME}.git"
+    git remote remove production
     git remote add production ${REMOTE}
     echo "Done!"
 }
@@ -48,12 +49,13 @@ function copy_post_receive () {
 
 function help_menu () {
 cat << EOF
-Usage: deploy (-h | -s | -c)
+Usage: deploy ( -h | -r | -c | -s )
 
 OPTIONS:
    -h|--help                  Show this message
-   -s|--setup                 Setup environment for server and development
    -c|--copy                  Copies post receive hook from config folder to server .git hook
+   -r|--remote                Adds the remote for the server
+   -s|--setup                 Setups environment for server and development and adds remote
 
 EXAMPLES:
   Sets up the server. Only do this once:
@@ -72,6 +74,10 @@ do
 case "${1}" in
   -c|--copy)
   copy_post_receive
+  shift
+  ;;
+  -r|--remote)
+  git_remote_add
   shift
   ;;
   -s|--setup)

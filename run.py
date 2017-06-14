@@ -58,10 +58,6 @@ if __name__ == '__main__':
     else:
         print("%s: Running app in local environment. Development Mode." % __file__)
 
-        if getenv('IS_HEROKU', "NO") == 'YES':
-            print("ERROR: Running development build on production")
-            exit(-1)
-
         if not local_db_exists():
             seed(app)
 

@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 
 from Dashboard.blueprints.api.models import Drivers
-from utils.setup import heroku_secret_seed
+from utils.setup import secret_seed
 from .decorators import anonymous_required
 from .forms import LoginForm
 from .models import User
@@ -69,13 +69,10 @@ def logout():
 
 @user.route('/secret-route')
 def secret_route():
-    if getenv('RESET_DATABASE', '0') != '1':
-        return redirect(url_for('.login'))
-
     if request.args.get('key', 'None') != getenv('SECRET_RESET', None):
         return redirect(url_for('.login'))
 
-    heroku_secret_seed()
+    secret_seed()
 
     flash("Seeding is successful", "success")
 
