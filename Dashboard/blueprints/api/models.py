@@ -76,7 +76,7 @@ class Drivers(ResourceMixin, db.Model):
             return None
         return Tasks.get_task_by_id(self.task_id).to_dict()
 
-    def ready(self, activity='ready'):
+    def ready(self, activity='start'):
         self.status = Choice('ready', 'Ready')  # put to ready
 
         if activity == 'complete':
@@ -89,16 +89,17 @@ class Drivers(ResourceMixin, db.Model):
             self.task_id = task.id
             task.do_task(self)
             self.status = Choice('on', 'On Task')
+
         return self.save()
 
-    def update_task(self, newTask_id):
+    def update_task(self, new_task_id):
         task = Tasks.get_task_by_id(self.task_id) # get old task id
         task.return_task()
 
-        self.task_id = newTask_id # set new task
+        self.task_id = new_task_id # set new task
         self.status = Choice('on', 'On Task')
 
-        newTask = Tasks.get_task_by_id(newTask_id)
+        newTask = Tasks.get_task_by_id(new_task_id)
         newTask.do_task(self)
 
         return self.save()
@@ -199,9 +200,9 @@ class Tasks(ResourceMixin, db.Model):
         return self.save()
 
     @classmethod
-    def get_first_task(cls, forecast=1) -> 'Tasks':
+    def get_first_task(cls, forecast=4) -> 'Tasks':
         return (Tasks.query
-                .filter((Tasks.ready_time <= now() + td(hours=24)) &
+                .filter((Tasks.ready_time <= now() + td(hours=forecast)) &
                         (Tasks.status == Choice('ready', 'Ready')) &
                         (Tasks.flight_time >= now()))
                 .order_by(Tasks.ready_time)
@@ -232,3 +233,7 @@ class Tasks(ResourceMixin, db.Model):
                            (Tasks.ready_time <= now() + td(hours=forecast)))
                    .all())
         return [t.to_dict() for t in records]
+
+    @classmethod
+    def get_all_tasks(cls):
+        return [t.to_dict() for t in Tasks.query.all()]

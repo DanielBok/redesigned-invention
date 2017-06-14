@@ -1,5 +1,5 @@
 import os
-
+import sys
 import click
 
 cmd_folder = os.path.join(os.path.dirname(__file__), 'commands')
@@ -32,9 +32,13 @@ class CLI(click.MultiCommand):
         ns = {}
         filename = os.path.join(cmd_folder, cmd_prefix + name + '.py')
 
-        with open(filename) as f:
-            code = compile(f.read(), filename, 'exec')
-            eval(code, ns, ns)
+        try:
+            with open(filename) as f:
+                code = compile(f.read(), filename, 'exec')
+                eval(code, ns, ns)
+        except FileNotFoundError:
+            print("Command {0} does not exist. Check help menu again".format(name), file=sys.stderr)
+            return None
 
         return ns['cli']
 

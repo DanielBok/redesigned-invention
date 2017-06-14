@@ -1,5 +1,6 @@
 import sys
 from datetime import timedelta as td
+from os import getenv
 from os.path import join, dirname, abspath, exists
 
 import pandas as pd
@@ -60,7 +61,7 @@ def insert_data(_db):
     :param _db: SQLAlchemy db context
     :return: None
     """
-
+    is_heroku = getenv('IS_HEROKU', 'NO') == 'YES'
 
     print('Seeding employees and driver tables.')
     # insert employees
@@ -83,6 +84,9 @@ def insert_data(_db):
             })
             names.append(name)
 
+            if is_heroku and c >= 20:
+                break
+
     for e in ProgressEnumerate(employees):
         if not User.find_by_identity(e['username']):
             _db.session.add(User(**e))
@@ -91,8 +95,10 @@ def insert_data(_db):
             _db.session.add(Drivers(name_=e['name']))
 
     print('Seeding Flights and Tasks table')
-    df = pd.DataFrame(
-        pd.read_pickle(join(APP_DATA, 'flights.p')))
+    df = pd.DataFrame(pd.read_pickle(join(APP_DATA, 'flights.p')))
+
+    if is_heroku:
+        df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=7))].reset_index(drop=True)
 
     df.rename(columns={
         'FL': 'flight_num',
@@ -118,10 +124,6 @@ def insert_data(_db):
             if nc % 4 != 0:
                 _containers.append(nc % 4)
 
-            last_num = 1 + nc // 4
-            if nc % 4 == 0:
-                last_num -= 1
-
             st = e['scheduled_time']
             rt = st if e['type_'] == 'A' else st - td(minutes=30)
             ct = st + td(minutes=rng.triangular(16, 17, 18))
@@ -131,7 +133,6 @@ def insert_data(_db):
                 if e['type_'] == 'A':
                     source = e['flight_num']
                     dest = 'HOTA'
-                    flight_time = None
                 else:
                     source = 'HOTA'
                     dest = e['flight_num']

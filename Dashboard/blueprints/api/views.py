@@ -1,7 +1,7 @@
+from datetime import timedelta as td
+
 from flask import Blueprint, request, redirect, jsonify
 from flask_restful import Api, Resource
-from Dashboard.extensions import csrf
-from datetime import timedelta as td
 
 from Dashboard.extensions import csrf
 from utils.datetime import now
@@ -31,13 +31,11 @@ class FlightsCtrl(Resource):
 
 class TasksCtrl(Resource):
     def get(self):
-        print(now())
         type_ = request.args.get('type')
         if type_ == 'all':
             tasks = Tasks.get_all_tasks_since(now(), now() + td(hours=24))
         else:
             tasks = Tasks.get_all_undone_tasks()
-            print("llalalals")
         return jsonify({
             'tasks': tasks
         })
@@ -65,13 +63,22 @@ class DriversCtrl(Resource):
         if activity in {'stop', 'break'}:
             d.stop_work(activity)
 
-        task_dict = None
-        if activity in {'start', 'complete'}:
+        elif activity in {'start', 'complete'}:
             d.ready(activity)
 
-        if activity in {'update'}:
-            newTask_id = data['target']
-            d.update_task(newTask_id)
+        elif activity in {'update'}:
+            new_task_id = data['target']
+            d.update_task(new_task_id)
+        else:
+            return jsonify({
+                'driver': {
+                    'name': d.name_,
+                    'status': d.status.value,
+                    'task_id': d.task_id
+                },
+                'task': None,
+                'error': 'Activity not recognized'
+            })
 
         return jsonify({
             'driver': {

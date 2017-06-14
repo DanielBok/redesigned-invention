@@ -30,45 +30,9 @@ D_drivers = [
     {'task_id': None, 'name_': 'Roger Shum Cheng Sean', 'status': Choice('off', 'Off Work')}
 ]
 
-T_tasks = [
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51984,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ997'},
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51988,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ238'},
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51989,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ661'},
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51991,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ891'},
-    {'completed_time': None, 'containers': 3, 'ready_time': now(), 'destination': 'HOTA', 'id': 51992,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ671'},
-    {'completed_time': None, 'containers': 4, 'ready_time': now(), 'destination': 'HOTA', 'id': 51993,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ425'},
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51994,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ425'},
-    {'completed_time': None, 'containers': 4, 'ready_time': now(), 'destination': 'HOTA', 'id': 51995,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ325'},
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'HOTA', 'id': 51996,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'SQ325'},
-    {'completed_time': None, 'containers': 3, 'ready_time': now(), 'destination': 'SQ116', 'id': 51997,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'},
-    {'completed_time': None, 'containers': 4, 'ready_time': now(), 'destination': 'SQ836', 'id': 51998,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'},
-    {'completed_time': None, 'containers': 2, 'ready_time': now(), 'destination': 'SQ836', 'id': 51999,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'},
-    {'completed_time': None, 'containers': 4, 'ready_time': now(), 'destination': 'SQ964', 'id': 52003,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'},
-    {'completed_time': None, 'containers': 1, 'ready_time': now(), 'destination': 'SQ186', 'id': 52005,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'},
-    {'completed_time': None, 'containers': 3, 'ready_time': now(), 'destination': 'SQ982', 'id': 52008,
-     'driver': None, 'status': Choice('ready', 'Ready'), 'source': 'HOTA'}
-]
-
-for i, (j, k) in enumerate(rng.uniform(1, 60, (len(T_tasks), 2))):
-    T_tasks[i]['ready_time'] += td(minutes=j, seconds=k)
-
 F_flights = [{'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ452', 'pax': 196, 'id': 39840, 'num_containers': 4,
               'terminal': 'T2', 'scheduled_time': now()},
-             {'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ211', 'pax': 231, 'id': 57763, 'num_containers': 0,
+             {'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ211', 'pax': 231, 'id': 57763, 'num_containers': 3,
               'terminal': 'T3', 'scheduled_time': now()},
              {'actual_time': now(), 'type_': 'A', 'flight_num': 'SQ305', 'pax': 217, 'id': 90970, 'num_containers': 2,
               'terminal': 'T3', 'scheduled_time': now()},
@@ -80,12 +44,35 @@ F_flights = [{'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ452', 'pax': 
               'terminal': 'T2', 'scheduled_time': now()},
              {'actual_time': now(), 'type_': 'D', 'flight_num': 'SQ636', 'pax': 250, 'id': 50788, 'num_containers': 3,
               'terminal': 'T3', 'scheduled_time': now()},
-             {'actual_time': now(), 'type_': 'A', 'flight_num': 'SQ615', 'pax': 250, 'id': 16804, 'num_containers': 4,
+             {'actual_time': now(), 'type_': 'A', 'flight_num': 'SQ615', 'pax': 250, 'id': 16804, 'num_containers': 7,
               'terminal': 'T3', 'scheduled_time': now()},
              {'actual_time': now(), 'type_': 'A', 'flight_num': 'SQ173', 'pax': 218, 'id': 76604, 'num_containers': 2,
               'terminal': 'T2', 'scheduled_time': now()},
              {'actual_time': now(), 'type_': 'A', 'flight_num': 'SQ208', 'pax': 235, 'id': 60450, 'num_containers': 3,
               'terminal': 'T3', 'scheduled_time': now()}]
 
+T_tasks = []
 for i, (j, k) in enumerate(rng.uniform(1, 60, (len(F_flights), 2))):
+
     F_flights[i]['scheduled_time'] += td(minutes=j, seconds=k)
+
+    _flight = F_flights[i]
+    _num_containers = _flight['num_containers']
+    _containers = [4 for _ in range(_num_containers // 4)]
+
+    if _num_containers % 4 != 0:
+        _containers.append(_num_containers % 4)
+
+    for _c in _containers:
+        T_tasks.append({
+            'status': Choice('ready', 'Ready'),
+            'ready_time': (
+                (_flight['scheduled_time'] + td(minutes=rng.triangular(1, 3, 5))) if _flight['type_'] == 'A' else
+                (_flight['scheduled_time'] + td(minutes=-30))),
+            'completed_time': _flight['scheduled_time'] + td(minutes=rng.triangular(16, 17, 18)),
+            'flight_time': _flight['scheduled_time'],
+            'driver': None,
+            'containers': _c,
+            'source': _flight['flight_num'] if _flight['type_'] == 'A' else 'HOTA',
+            'destination': 'HOTA' if _flight['type_'] == 'A' else _flight['flight_num']
+        })

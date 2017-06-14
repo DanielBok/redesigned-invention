@@ -12,6 +12,9 @@ db.app = app
 
 @click.group()
 def cli():
+    """
+    Group with all database operations
+    """
     pass
 
 
