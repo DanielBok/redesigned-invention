@@ -40,6 +40,8 @@ if __name__ == '__main__':
 
     if args.seed and getenv('RESET_DATABASE', "0") == "1":
         seed(app)
+        os.environ['RESET_DATABASE'] = "0"
+        exit(1)
 
     if args.production:
 
