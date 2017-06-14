@@ -1,4 +1,3 @@
-import sys
 from os.path import join, abspath, dirname
 from socket import gethostbyname_ex, gethostname
 
@@ -24,12 +23,11 @@ def ProgressEnumerate(iterable, length=50):
                 '#' * bar_length,
                 '-' * (length - bar_length),
                 progress * 100,
-                '\t'
+                ' ' * 5
             )
             print(msg, end='\r')
-            sys.stdout.flush()
         else:
-            print("Complete: [{0}]\t 100%{1}".format(length * '#', '\t' * 5))
+            print("Complete: [{0}]\t 100%{1}".format(length * '#', ' ' * 10))
 
     for i, obj in enumerate(iterable):
         _update(i)
