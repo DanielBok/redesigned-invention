@@ -28,7 +28,6 @@ app = create_app()
 if __name__ == '__main__':
     parser = make_parser()
     args = parser.parse_args()
-    print(args)
 
     if args.build:
         subprocess.call('pip install --editable .', shell=True)
