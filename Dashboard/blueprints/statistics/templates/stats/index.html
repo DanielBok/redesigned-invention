@@ -1,0 +1,42 @@
+{% extends 'stats/base.html' %}
+{% from 'macros/designs.html' import loader %}
+
+{% block app %}
+<div ng-controller="statsCtrl" ng-cloak class="container">
+    <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+        <div ng-switch="loading">
+            <div ng-switch-when="true">
+                {{ loader() }}
+            </div>
+            <div ng-switch-default>
+                <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+                    <div class="col s12">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">textsms</i>
+                                <input type="text" id="autocomplete-driver" class="autocomplete"
+                                       ng-model="data.driver" ng-change="driverChange()">
+                                <label for="autocomplete-driver">Driver</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <canvas id="line" class="chart chart-line" chart-data="chart.containers"
+                            chart-labels="chart.date" chart-series="chart.series" chart-options="chart.options">
+                    </canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

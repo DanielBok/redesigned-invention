@@ -120,7 +120,7 @@ def secret_seed():
 
     _seed_users_and_workers(db, employees)
 
-    _seed_flights_and_task(db, names, 7)
+    _seed_flights_and_task(db, names, 3, 3)
 
 
 def _seed_users_and_workers(_db, employees: list):
@@ -144,13 +144,14 @@ def _seed_users_and_workers(_db, employees: list):
         print("ERROR: Mass commit failed!!!! ", e, sep='\n', end='\n', file=sys.stderr)
 
 
-def _seed_flights_and_task(_db, names: list, limiter=-1.0):
+def _seed_flights_and_task(_db, names: list, days_before: int = None, days_after: int = None, limiter=250):
     print('Seeding Flights and Tasks table')
     count = 0
     df = pd.DataFrame(pd.read_pickle(get_app_data_path('flights.p')))
 
-    if limiter > 0:
-        df = df.loc[(df.TIME >= now()) & (df.TIME <= now() + td(days=limiter))].reset_index(drop=True)
+    if days_after is not None and days_after is not None:
+        df = df.loc[(df.TIME >= now() - td(days=days_before)) &
+                    (df.TIME <= now() + td(days=days_after))].reset_index(drop=True)
 
     df.rename(columns={
         'FL': 'flight_num',
@@ -226,7 +227,7 @@ def _seed_flights_and_task(_db, names: list, limiter=-1.0):
                 }
                 _db.session.add(Tasks(**task_data))
 
-                if count % 250 == 0:
+                if count % limiter == 0:
                     _db.session.commit()
                 count += 1
 

@@ -1,11 +1,12 @@
 from flask import Flask
 
 from Dashboard.blueprints.api import api
+from Dashboard.blueprints.driver import driver
 from Dashboard.blueprints.manager import managers
+from Dashboard.blueprints.statistics import stats
 from Dashboard.blueprints.user import user
 from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import login_manager, db, csrf, toolbar
-from Dashboard.blueprints.driver import driver
 
 
 def create_app(settings_override=None):
@@ -26,6 +27,7 @@ def create_app(settings_override=None):
     app.register_blueprint(managers, url_prefix='/manager')
     app.register_blueprint(api, url_prefix="/api")
     app.register_blueprint(driver, url_prefix='/driver')
+    app.register_blueprint(stats, url_prefix="/stats")
 
     # Extend app to use other 3rd-party flask libraries
     toolbar.init_app(app)

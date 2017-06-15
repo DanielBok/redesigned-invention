@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime as dt, timedelta as td
 
 from numpy import random as rng
@@ -185,7 +186,7 @@ class Tasks(ResourceMixin, db.Model):
         msg = 'TASK DATA\n' + '\n'.join("{0}\t {1}".format(str(k), str(v)) for k, v in self.to_dict().items())
         return msg
 
-    def to_dict(self, purpose="driver"):
+    def to_dict(self, purpose: str = None):
         payload = {
             'task_id': self.id,
             'ready_time': self.ready_time,
@@ -197,11 +198,11 @@ class Tasks(ResourceMixin, db.Model):
             'driver': self.driver
         }
 
-        if purpose == "stats":
+        if purpose and purpose.startswith("stats"):
             payload.update({
-                "completed_time": self.completed_time,
                 "time_taken": self.task_time_taken
             })
+            payload.pop('status')
         return payload
 
     def do_task(self, driver: Drivers):
@@ -259,5 +260,26 @@ class Tasks(ResourceMixin, db.Model):
         return [t.to_dict() for t in records]
 
     @classmethod
-    def get_all_tasks(cls):
-        return [t.to_dict() for t in Tasks.query.all()]
+    def get_all_tasks(cls, purpose=None):
+        return [t.to_dict(purpose) for t in Tasks.query.all()]
+
+    @classmethod
+    def get_all_done_tasks(cls):
+        return [t.to_dict('stats') for t in Tasks.query.filter(Tasks.status == Choice('done', 'Done')).all()]
+
+    @classmethod
+    def get_all_drivers(cls):
+        return [t[0] for t in Tasks.query.with_entities(Tasks.driver).distinct(Tasks.driver).all()]
+
+    @classmethod
+    def get_driver_stats(cls, driver, jsonify=True):
+        data = defaultdict(list)
+        for t in Tasks.query.filter((Tasks.status == Choice('done', 'Done')) &
+                                            (Tasks.driver == driver)).all():
+            for k, v in t.to_dict('stats').items():
+                if k in {'status', 'task_id', 'driver'}:
+                    continue
+                if jsonify and type(v) == dt:
+                    v = v.isoformat()
+                data[k].append(v)
+        return {driver: data}
