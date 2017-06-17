@@ -52,7 +52,7 @@ app.controller("allocCtrl", ($scope, $http) => {
 });
 
 // Controller for flight schedules
-app.controller('fsCtrl', ($scope, $http, $location, NgTableParams) => {
+app.controller('fsCtrl', ($scope, $http) => {
     $scope.fs = {
         data: [],
         loading: true,
@@ -125,15 +125,15 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
     };
 
     $scope.deallocate = (task) => {
-        console.log("deallocate driver: ", task.driver)
-        $scope.updateDeallocatedDriver = task.driver
+        console.log("deallocate driver: ", task.driver);
+        $scope.updateDeallocatedDriver = task.driver;
         $scope.free = task.driver;
         task.driver = null;
     };
 
     $scope.allocate = (task) => {
-        console.log("allocate driver to: ", task.task_id)
-        $scope.updateAllocatedTask = task.task_id
+        console.log("allocate driver to: ", task.task_id);
+        $scope.updateAllocatedTask = task.task_id;
         task.driver = $scope.free;
         $scope.free = null;
     };
