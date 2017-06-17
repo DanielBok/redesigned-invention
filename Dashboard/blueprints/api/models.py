@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import datetime as dt, timedelta as td
 
+import pandas as pd
 from numpy import random as rng
 from sqlalchemy_utils.types import ChoiceType, Choice
 
@@ -283,3 +284,9 @@ class Tasks(ResourceMixin, db.Model):
                     v = v.isoformat()
                 data[k].append(v)
         return {driver: data}
+
+    @classmethod
+    def get_tasks_data(cls):
+        data = [t.to_dict('stats') for t in Tasks.query.filter(Tasks.status == Choice('done', 'Done')).all()]
+        columns = data[0].keys()
+        return pd.DataFrame(data, columns=columns)

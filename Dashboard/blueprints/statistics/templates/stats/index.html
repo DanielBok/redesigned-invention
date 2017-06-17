@@ -9,7 +9,8 @@
                 {{ loader() }}
             </div>
             <div ng-switch-default>
-                <div class="row" style="margin-left:0 !important; margin-right:0 !important">
+                <div class="row">
+                    <h4>Driver Performance</h4>
                     <div class="col s12">
                         <div class="row">
                             <div class="input-field col s12">
@@ -20,15 +21,41 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col s12">
+                        <canvas id="driver-perf" class="chart chart-line" chart-data="chart.containers"
+                                chart-labels="chart.date" chart-series="chart.series" chart-options="chart.options">
+                        </canvas>
+                    </div>
                 </div>
                 <br>
                 <div class="row">
-                    <canvas id="line" class="chart chart-line" chart-data="chart.containers"
-                            chart-labels="chart.date" chart-series="chart.series" chart-options="chart.options">
-                    </canvas>
+                    <h4>Total Containers by Day</h4>
+                    <div class="col s12">
+                        <canvas id="TCBD" class="chart chart-line"
+                                chart-data="data.all.container_total_by_day.sum"
+                                chart-labels="data.all.container_total_by_day.dow"
+                                chart-series="data.all.container_total_by_day.dow"
+                                chart-options="">
+                        </canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <h4>Mean Containers by Day</h4>
+                    <div class="col s12">
+                        <canvas id="MCBD" class="chart chart-line"
+                                chart-data="data.all.container_mean_by_day.mean"
+                                chart-labels="data.all.container_total_by_day.dow"
+                                chart-series="data.all.container_total_by_day.dow"
+                                chart-options="">
+                        </canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <a href="{{ url_for('stats.as_csv') }}" target="_blank"
+                       class="btn btn-block btn-large" download="Data.xlsx">
+                        Save as CSV</a>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="row">
