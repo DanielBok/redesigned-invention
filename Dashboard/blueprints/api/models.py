@@ -245,9 +245,13 @@ class Tasks(ResourceMixin, db.Model):
         if stop is None:
             stop = now()
         records = (Tasks.query
-                   .filter(((Tasks.ready_time >= start) &
-                            (Tasks.ready_time <= stop)) |
-                           (Tasks.status == Choice('er', 'En-route')))
+                   .filter((Tasks.ready_time >= start) &
+                           (Tasks.ready_time <= stop) &
+                           (
+                               (Tasks.status == Choice('ready', 'Ready')) |
+                               (Tasks.status == Choice('er', 'En-route'))
+                           )
+                           )
                    .order_by(Tasks.ready_time)
                    .all())
         return [t.to_dict() for t in records]

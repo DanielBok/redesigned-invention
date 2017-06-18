@@ -31,9 +31,9 @@ class FlightsCtrl(Resource):
 
 class TasksCtrl(Resource):
     def get(self):
-        type_ = request.args.get('type')
+        type_ = request.args.get('type')  # request was too huge
         if type_ == 'all':
-            tasks = Tasks.get_all_tasks_since(now(), now() + td(hours=24))
+            tasks = Tasks.get_all_tasks_since(now() - td(hours=1), (now() + td(hours=2)))
         else:
             tasks = Tasks.get_all_undone_tasks()
         return jsonify({

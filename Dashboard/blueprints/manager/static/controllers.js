@@ -91,33 +91,32 @@ app.controller('fsCtrl', ($scope, $http) => {
 });
 
 // Controller for taskboard
-app.controller('tbCtrl', ($scope, $http , $interval) => {
+app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $scope.loading = true;
     let jq = $.noConflict();
     $scope.editing = false;
     $scope.free = null;
 
     $scope.loadTaskBoard = () => {
-        $http.get(api('tasks', {type: 'all'})).then(
-            (res) => {
-                console.log("Tasks ", res);
-                $scope.tasks = res.data.tasks;
-                setTimeout(() => jq('select').material_select(), 500);
-            },
-            (err) => {
-                console.error('error', err);
-            }
-        );
 
-        $http.get(api('drivers')).then(
-            (res) => {
-                console.log("Drivers ", res);
-                $scope.drivers = res.data.drivers;
-            },
-            (err) => {
-                console.error('error', err);
-            }
-        );
+        // Resolve all your promises simultaneously. Previous resolution was asynchronous and led to
+        // concurrency errors
+        $q.all([
+            $http.get(api('tasks', {type: 'all'})),
+            $http.get(api('drivers'))
+        ]).then(data => {
+            let tasks = data[0].data;
+            let drivers = data[1].data;
+
+            $scope.tasks = tasks.tasks;
+            setTimeout(() => jq('select').material_select(), 500);
+
+            $scope.drivers = drivers.drivers;
+
+        }, err => {
+            console.error("ERROR", err);
+        });
+
         $scope.changeDriver = (newDriver) => {
             $scope.test = newDriver;
         };
@@ -163,13 +162,15 @@ app.controller('tbCtrl', ($scope, $http , $interval) => {
         $scope.toggleEdit();
     };
 
-    //$scope.loadTaskBoard();
+    $scope.loadTaskBoard(); // first load
 
     $interval(function() {
-    	if (!$scope.editing){
+        // Call interval function only after first load
+    	if (!$scope.editing && !$scope.loading){
+    	    console.log("Called");
     		$scope.loadTaskBoard();
     	}
-     }, 5000);
+     }, 30000);
 
 });
 
