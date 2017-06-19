@@ -94,8 +94,12 @@ app.controller('fsCtrl', ($scope, $http) => {
 app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $scope.loading = true;
     let jq = $.noConflict();
+    $scope.disableAllocateButton = true;
     $scope.editing = false;
+<<<<<<< HEAD
     $scope.free = false;
+=======
+>>>>>>> 1c37f3d609a05caf3bfb461077f1f0d7a9484123
 
     $scope.loadTaskBoard = () => {
 
@@ -128,15 +132,15 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $scope.deallocate = (task) => {
         console.log("deallocate driver: ", task.driver);
         $scope.updateDeallocatedDriver = task.driver;
-        $scope.free = task.driver;
         task.driver = null;
+        $scope.disableAllocateButton = false;
     };
 
     $scope.allocate = (task) => {
         console.log("allocate driver to: ", task.task_id);
         $scope.updateAllocatedTask = task.task_id;
-        task.driver = $scope.free;
-        $scope.free = true;
+        $scope.disableAllocateButton = true;
+        task.driver = $scope.updateDeallocatedDriver;
     };
 
     $scope.toggleEdit = () => {
@@ -162,8 +166,9 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     };
 
     $scope.cancel = () => {
-        $scope.loadTaskBoard();
+
         $scope.toggleEdit();
+        $scope.loadTaskBoard();
     };
 
     $scope.loadTaskBoard(); // first load
@@ -173,7 +178,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     	if (!$scope.editing && !$scope.loading){
     		$scope.loadTaskBoard();
     	}
-     }, 30000);
+     }, 20000);
 
 });
 
