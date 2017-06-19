@@ -150,6 +150,10 @@ class Drivers(ResourceMixin, db.Model):
         return [{'name': d.name_, 'status': d.status.value, 'task_id': d.task_id}
                 for d in Drivers.query.all()]
 
+    @classmethod
+    def get_all_drivers_names(cls):
+        return [d.name_ for d in Drivers.query.all()]
+
 
 class Tasks(ResourceMixin, db.Model):
     STATUSES = [
