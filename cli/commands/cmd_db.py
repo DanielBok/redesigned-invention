@@ -107,7 +107,7 @@ def clear_before_now():
     print("Setting all tasks whose flight time <= now as done")
     tasks = (Tasks.query
              .filter((Tasks.flight_time <= now()) &
-                     (Tasks.status != Choice('ready', 'Ready')))
+                     (Tasks.status != Choice('done', 'Done')))
              .all())
     print("Total tasks: ", len(tasks))
 
