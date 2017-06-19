@@ -95,7 +95,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $scope.loading = true;
     let jq = $.noConflict();
     $scope.editing = false;
-    $scope.free = null;
+    $scope.free = false;
 
     $scope.loadTaskBoard = () => {
 
@@ -107,7 +107,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
         ]).then(data => {
             let tasks = data[0].data;
             let drivers = data[1].data;
-            //console.log("tasks: ", tasks)
+            console.log("tasks: ", tasks)
 
             $scope.tasks = tasks.tasks;
             setTimeout(() => jq('select').material_select(), 500);
@@ -135,7 +135,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
         console.log("allocate driver to: ", task.task_id);
         $scope.updateAllocatedTask = task.task_id;
         task.driver = $scope.free;
-        $scope.free = null;
+        $scope.free = true;
     };
 
     $scope.toggleEdit = () => {
@@ -170,7 +170,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $interval(function() {
         // Call interval function only after first load
     	if (!$scope.editing && !$scope.loading){
-    	    console.log("Called");
+    	    console.log("interval called");
     		$scope.loadTaskBoard();
     	}
      }, 30000);

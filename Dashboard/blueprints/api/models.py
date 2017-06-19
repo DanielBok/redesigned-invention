@@ -196,7 +196,8 @@ class Tasks(ResourceMixin, db.Model):
             'source': self.source,
             'destination': self.destination,
             'containers': self.containers,
-            'driver': self.driver
+            'driver': self.driver,
+            'bay': self.bay
         }
 
         if purpose and purpose.startswith("stats"):

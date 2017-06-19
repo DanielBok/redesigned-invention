@@ -43,7 +43,7 @@
                       <td>[[ task.destination ]]</td>
                       <td>[[ task.ready_time | toJustTime ]]</td>
                       <td>[[ task.flight_time | toJustTime ]]</td>
-                      <td>dummy</td>
+                      <td>[[ task.bay ]]</td>
                       <td>[[ task.containers ]]</td>
                       <td>[[ task.driver ]]</td>
                       <!-- <td ng-show="editing"><div class="input-field">
@@ -52,11 +52,11 @@
                               <option ng-selected="d.name === task.driver" ng-repeat="d in drivers">[[ d.name ]]</option>
                           </select>
                       </div></td> -->
-                      <td ng-show="task.status == 'Ready'" ><p>Ready</p></td>
-                      <td ng-show="task.status == 'En-route'"><p>Enroute</p></td>
-                      <td ng-show="task.status == 'Done'" ><p>Done</p></td>
-                      <td ng-if="!free" ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)"><i class="material-icons">eject</i></button></td>
-                      <td ng-if="free" ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)"><i class="material-icons">get_app</i></button></td>
+                      <td ng-show="task.status == 'Ready'" ><span class="new badge" data-badge-caption="ready"></span></td>
+                      <td ng-show="task.status == 'En-route'"><span class="new badge blue" data-badge-caption="en-route"></span></td>
+                      <td ng-show="task.status == 'Done'" ><span class="new badge green" data-badge-caption="done"></span></td>
+                      <td ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)"><i class="material-icons">eject</i></button></td>
+                      <td ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)"><i class="material-icons">get_app</i></button></td>
                     </tr>
                   </tbody>
 
