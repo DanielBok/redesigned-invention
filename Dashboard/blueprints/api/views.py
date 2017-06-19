@@ -72,6 +72,10 @@ class DriversCtrl(Resource):
         elif activity in {'update'}:
             new_task_id = data['target']
             d.update_task(new_task_id)
+        
+        elif activity in {'get_task'}:
+            d.get_task()
+        
         else:
             return jsonify({
                 'driver': {

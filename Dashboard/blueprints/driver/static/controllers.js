@@ -15,10 +15,11 @@ app.controller("driverCtrl", ($scope, $http) => {
         (res) => {
             console.log(res);
             $scope.loading = false;
-            if (res.data.drivers[0].status 'Ready') {
-                $scope.ready = true;
-            } else {
-                $scope.ready = false;
+            if (res.data.drivers[0].status!='Off Work') {
+              $scope.ready = true;
+              $scope.refreshTasks();
+            } else{
+              $scope.ready = false;
             };
             //console.log(res.data.drivers[0].status)
         },
@@ -27,7 +28,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         }
         $scope.loading = false;
     );
-    $scope.done = false;
+    //$scope.done = false;
 
     $scope.setReady = function() {
         if ($scope.ready){
@@ -96,7 +97,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         $scope.loading = true;
         let payload = {
             name: $scope.name,
-            activity: "ready"
+            activity: "get_task"
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
