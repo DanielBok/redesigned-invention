@@ -19,6 +19,19 @@ main {
     }
 }
 
+
+.ready-class{
+  background-color: #E94F64;
+}
+
+.enRoute-class{
+  background-color: #52D273;
+}
+
+.done-class{
+  background-color: #d5dbde;
+}
+
 .footer-nav {
     padding-top: 2rem;
     padding-bottom: 1.5rem;

@@ -107,6 +107,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
         ]).then(data => {
             let tasks = data[0].data;
             let drivers = data[1].data;
+            //console.log("tasks: ", tasks)
 
             $scope.tasks = tasks.tasks;
             setTimeout(() => jq('select').material_select(), 500);
@@ -156,9 +157,11 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
                 console.error('error', err);
             }
         );
+        $scope.loadTaskBoard();
     };
 
     $scope.cancel = () => {
+        $scope.loadTaskBoard();
         $scope.toggleEdit();
     };
 

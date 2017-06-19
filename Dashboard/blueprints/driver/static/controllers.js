@@ -15,6 +15,12 @@ app.controller("driverCtrl", ($scope, $http) => {
         (res) => {
             console.log(res);
             $scope.loading = false;
+            if (res.data.drivers[0].status=='Ready') {
+              $scope.ready = true;
+            } else{
+              $scope.ready = false;
+            };
+            //console.log(res.data.drivers[0].status)
         },
         (err) => {
             console.error('error', err);
@@ -22,6 +28,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         }
     );
     $scope.done = false;
+
 
     $scope.setReady = function() {
         if ($scope.ready){

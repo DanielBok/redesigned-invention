@@ -13,7 +13,7 @@
                     <div class="switch">
                         <label>
                             Not Ready
-                            <input type="checkbox" ng-click='setReady()'>
+                            <input type="checkbox" ng-click='setReady()' ng-checked="ready">
                             <span class="lever"></span>
                             Ready
                         </label>
@@ -42,8 +42,8 @@
                                     <table>
                                         <thead>
                                         <th>Task ID</th>
-                                        <th>Source</th>
-                                        <th>Destination</th>
+                                        <th>From</th>
+                                        <th>To</th>
                                         <th>Ready Time</th>
                                         <th>Containers</th>
                                         </thead>

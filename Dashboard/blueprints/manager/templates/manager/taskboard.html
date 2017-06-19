@@ -11,8 +11,6 @@
             <div class="row">
                 <button class="btn" ng-show="!editing" ng-click="toggleEdit()">Edit</button>
                 <button class="btn" ng-show="editing" ng-click="submit()">Confirm</button>
-            </div>
-            <div ng-switch-default>
                 <button class="btn" ng-show="editing" ng-click="cancel()">Cancel</button>
             </div>
             <div style="display:none !important">
@@ -26,10 +24,11 @@
                   <thead>
                   <tr>
                       <th>ID</th>
-                      <th>Source</th>
-                      <th>Destination</th>
+                      <th>From</th>
+                      <th>To</th>
                       <th>Ready time</th>
                       <th>Flight time</th>
+                      <th>Bay</th>
                       <th>Containers</th>
                       <th>Driver</th>
                       <th>Progress</th>
@@ -38,12 +37,13 @@
                   </thead>
 
                   <tbody>
-                  <tr ng-repeat="task in tasks">
+                  <tr ng-repeat="task in tasks" ng-class="{'ready-class': task.status == 'Ready', 'enRoute-class': task.status == 'En-route', 'done-class': task.status == 'Done'}">
                       <td>[[ task.task_id ]]</td>
                       <td>[[ task.source ]]</td>
                       <td>[[ task.destination ]]</td>
                       <td>[[ task.ready_time | toJustTime ]]</td>
                       <td>[[ task.flight_time | toJustTime ]]</td>
+                      <td>dummy</td>
                       <td>[[ task.containers ]]</td>
                       <td>[[ task.driver ]]</td>
                       <!-- <td ng-show="editing"><div class="input-field">
