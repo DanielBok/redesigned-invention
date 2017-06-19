@@ -63,6 +63,9 @@ class DriversCtrl(Resource):
         if activity in {'stop', 'break'}:
             d.stop_work(activity)
 
+        elif activity in {'ready', 'refresh'}:
+            d.get_task()
+
         elif activity in {'start', 'complete'}:
             d.ready(activity)
 

@@ -25,11 +25,10 @@ app.controller("driverCtrl", ($scope, $http) => {
         },
         (err) => {
             console.error('error', err);
-            $scope.loading = false;
         }
+        $scope.loading = false;
     );
     //$scope.done = false;
-
 
     $scope.setReady = function() {
         if ($scope.ready){

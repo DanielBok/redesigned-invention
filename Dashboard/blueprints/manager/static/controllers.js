@@ -173,8 +173,9 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
       // Call al function only after first load
     	if (!$scope.editing && !$scope.loading){
     		$scope.loadTaskBoard();
+        Materialize.toast('Taskboard refreshed!', 2000)
     	}
-     }, 20000);
+    }, 15000);
 
 });
 

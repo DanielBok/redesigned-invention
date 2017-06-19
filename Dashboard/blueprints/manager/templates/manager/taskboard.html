@@ -43,18 +43,13 @@
                       <td>[[ task.destination ]]</td>
                       <td>[[ task.ready_time | toJustTime ]]</td>
                       <td>[[ task.flight_time | toJustTime ]]</td>
-                      <td>[[ task.bay ]]</td>
-                      <td><div class="chip">[[ task.containers ]]</div></td>
+                      <td><div class="grey lighten-5 chip">[[ task.bay ]]</div></td>
+                      <td><div class="grey lighten-5 chip">[[ task.containers ]]</div></td>
                       <td>[[ task.driver ]]</td>
-                      <!-- <td ng-show="editing"><div class="input-field">
-                          <select>
-                              <option></option>
-                              <option ng-selected="d.name === task.driver" ng-repeat="d in drivers">[[ d.name ]]</option>
-                          </select>
-                      </div></td> -->
-                      <td ng-show="task.status == 'Ready'" ><p>Ready</p></td>
-                      <td ng-show="task.status == 'En-route'"><p>Enroute</p></td>
-                      <td ng-show="task.status == 'Done'" ><p>Done</p></td>
+
+                      <td ng-show="task.status == 'Ready'" ><div class="teal white-text chip">Ready</div></td>
+                      <td ng-show="task.status == 'En-route'"><div class="light-blue darken-1 white-text chip">Enroute</div></td>
+                      <td ng-show="task.status == 'Done'" ><div class="green darken-1 white-text chip">Done</div></td>
                       <td ng-show="editing && (task.driver != null) "><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)" ng-disabled="!disableAllocateButton || task.status== 'Done'" ><i class="material-icons">eject</i></button></td>
                       <td ng-show="editing && task.driver == null "><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)" ng-disabled="disableAllocateButton || task.status== 'Done'"><i class="material-icons">get_app</i></button></td>
                     </tr>
