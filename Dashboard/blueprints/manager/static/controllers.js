@@ -99,6 +99,7 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
 
     $scope.loadTaskBoard = () => {
 
+        console.log("loading taskboard");
         // Resolve all your promises simultaneously. Previous resolution was asynchronous and led to
         // concurrency errors
         $q.all([
@@ -168,9 +169,8 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $scope.loadTaskBoard(); // first load
 
     $interval(function() {
-        // Call interval function only after first load
+      // Call al function only after first load
     	if (!$scope.editing && !$scope.loading){
-    	    console.log("interval called");
     		$scope.loadTaskBoard();
     	}
      }, 30000);
