@@ -55,8 +55,8 @@
                       <td ng-show="task.status == 'Ready'" ><p>Ready</p></td>
                       <td ng-show="task.status == 'En-route'"><p>Enroute</p></td>
                       <td ng-show="task.status == 'Done'" ><p>Done</p></td>
-                      <td ng-show="editing && (task.driver != null) "><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)" ng-disabled="!disableAllocateButton" ><i class="material-icons">eject</i></button></td>
-                      <td ng-show="editing && task.driver == null "><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)" ng-disabled="disableAllocateButton"><i class="material-icons">get_app</i></button></td>
+                      <td ng-show="editing && (task.driver != null) "><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)" ng-disabled="!disableAllocateButton || task.status== 'Done'" ><i class="material-icons">eject</i></button></td>
+                      <td ng-show="editing && task.driver == null "><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)" ng-disabled="disableAllocateButton || task.status== 'Done'"><i class="material-icons">get_app</i></button></td>
                     </tr>
                   </tbody>
 

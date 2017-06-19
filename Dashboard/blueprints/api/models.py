@@ -88,7 +88,7 @@ class Drivers(ResourceMixin, db.Model):
             return None
         return Tasks.get_task_by_id(self.task_id).to_dict()
 
-    def ready(self, activity='start'):
+    def ready(self, activity: str):
         self.status = Choice('ready', 'Ready')  # put to ready
 
         if activity == 'complete':
@@ -99,7 +99,7 @@ class Drivers(ResourceMixin, db.Model):
         task = Tasks.get_first_task()  # get task
         if task is not None:  # if there is task, give driver task
             self.task_id = task.id
-            task.do_task(self)
+            task.do_task(self.name_)
             self.status = Choice('on', 'On Task')
 
         return self.save()
@@ -110,7 +110,7 @@ class Drivers(ResourceMixin, db.Model):
         self.task_id = new_task_id  # set new task
         self.status = Choice('on', 'On Task')
 
-        Tasks.get_task_by_id(new_task_id).do_task(self)
+        Tasks.get_task_by_id(new_task_id).do_task(self.name_)
 
         return self.save()
 
@@ -211,8 +211,8 @@ class Tasks(ResourceMixin, db.Model):
             payload.pop('status')
         return payload
 
-    def do_task(self, driver: Drivers):
-        self.driver = driver.name_
+    def do_task(self, driverName: str):
+        self.driver = driverName
         self.status = Choice('er', 'En-route')
         self.task_start_time = now()
         return self.save()
@@ -251,11 +251,11 @@ class Tasks(ResourceMixin, db.Model):
             stop = now()
         records = (Tasks.query
                    .filter((Tasks.ready_time >= start) &
-                           (Tasks.ready_time <= stop) &
-                           (
-                               (Tasks.status == Choice('ready', 'Ready')) |
-                               (Tasks.status == Choice('er', 'En-route'))
-                           )
+                           (Tasks.ready_time <= stop) #&
+                           #(
+                           #    (Tasks.status == Choice('ready', 'Ready')) |
+                           #    (Tasks.status == Choice('er', 'En-route'))
+                           #)
                            )
                    .order_by(Tasks.ready_time)
                    .all())

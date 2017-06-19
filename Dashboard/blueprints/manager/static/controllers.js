@@ -104,16 +104,16 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
         // concurrency errors
         $q.all([
             $http.get(api('tasks', {type: 'all'})),
-            $http.get(api('drivers'))
+            //$http.get(api('drivers'))
         ]).then(data => {
             let tasks = data[0].data;
-            let drivers = data[1].data;
+            //let drivers = data[1].data;
             console.log("tasks: ", tasks)
 
             $scope.tasks = tasks.tasks;
             setTimeout(() => jq('select').material_select(), 500);
 
-            $scope.drivers = drivers.drivers;
+            //$scope.drivers = drivers.drivers;
 
         }, err => {
             console.error("ERROR", err);

@@ -74,7 +74,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         $scope.loading = true;
         let payload = {
             name: $scope.name,
-            activity: "complete"
+            activity: 'complete'
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
@@ -98,7 +98,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         $scope.loading = true;
         let payload = {
             name: $scope.name,
-            activity: "get_task"
+            activity: 'get_task'
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
