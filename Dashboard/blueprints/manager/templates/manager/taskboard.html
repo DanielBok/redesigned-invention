@@ -46,12 +46,6 @@
                       <td>[[ task.bay ]]</td>
                       <td><div class="chip">[[ task.containers ]]</div></td>
                       <td>[[ task.driver ]]</td>
-                      <!-- <td ng-show="editing"><div class="input-field">
-                          <select>
-                              <option></option>
-                              <option ng-selected="d.name === task.driver" ng-repeat="d in drivers">[[ d.name ]]</option>
-                          </select>
-                      </div></td> -->
                       <td ng-show="task.status == 'Ready'" ><p>Ready</p></td>
                       <td ng-show="task.status == 'En-route'"><p>Enroute</p></td>
                       <td ng-show="task.status == 'Done'" ><p>Done</p></td>
