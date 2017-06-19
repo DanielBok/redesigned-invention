@@ -96,10 +96,6 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     let jq = $.noConflict();
     $scope.disableAllocateButton = true;
     $scope.editing = false;
-<<<<<<< HEAD
-    $scope.free = false;
-=======
->>>>>>> 1c37f3d609a05caf3bfb461077f1f0d7a9484123
 
     $scope.loadTaskBoard = () => {
 
