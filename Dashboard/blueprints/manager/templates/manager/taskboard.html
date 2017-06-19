@@ -9,9 +9,9 @@
         </div>
         <div ng-switch-default>
             <div class="row">
-                <button class="btn" ng-show="!editing" ng-click="toggleEdit()">Edit</button>
-                <button class="btn" ng-show="editing" ng-click="submit()">Confirm</button>
-                <button class="btn" ng-show="editing" ng-click="cancel()">Cancel</button>
+                <button class="btn" ng-show="!editing" ng-click="toggleEdit()">Edit<i class="material-icons right">mode_edit</i></button>
+                <button class="btn right" ng-show="editing" ng-click="submit()">Confirm<i class="material-icons right">done</i></button>
+                <button class="btn" ng-show="editing" ng-click="cancel()">Cancel<i class="material-icons right">delete</i></button>
             </div>
             <div style="display:none !important">
                 [[updateAllocatedTask]]
@@ -55,8 +55,8 @@
                       <td ng-show="task.status == 'Ready'" ><p>Ready</p></td>
                       <td ng-show="task.status == 'En-route'"><p>Enroute</p></td>
                       <td ng-show="task.status == 'Done'" ><p>Done</p></td>
-                      <td ng-if="!free" ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)"><i class="material-icons">perm_identity</i></button></td>
-                      <td ng-if="free" ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)"><i class="material-icons">play_for_work</i></button></td>
+                      <td ng-if="!free" ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="deallocate(task)"><i class="material-icons">eject</i></button></td>
+                      <td ng-if="free" ng-show="editing"><button class="btn-floating waves-effect waves-light red" ng-click="allocate(task)"><i class="material-icons">get_app</i></button></td>
                     </tr>
                   </tbody>
 
