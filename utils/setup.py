@@ -167,7 +167,7 @@ def _seed_flights_and_task(_db, names: list, days_before: int = None, days_after
     df['actual_time'] = [t + td(minutes=m) for t, m in zip(df.scheduled_time, mixture)]
 
     otime = now()
-    time = otime + td(minutes=5)
+    time = otime + td(minutes=1)
     ddf = df.to_dict('records')
     for e in ProgressEnumerate(ddf):
         _db.session.add(Flights(**e))
