@@ -166,9 +166,6 @@ def _seed_flights_and_task(_db, names: list, days_before: int = None, days_after
     mixture = rng.normal(-2.5, 3, len(df)) + rng.normal(2.5, 3, len(df))
     df['actual_time'] = [t + td(minutes=m) for t, m in zip(df.scheduled_time, mixture)]
 
-    df.scheduled_time = df.scheduled_time.map(lambda x: localize(x))
-    df.actual_time = df.actual_time.map(lambda x: localize(x))
-
     otime = now()
     time = otime + td(minutes=1)
     ddf = df.to_dict('records')
