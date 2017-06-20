@@ -2,7 +2,6 @@ from collections import defaultdict
 from datetime import datetime as dt, timedelta as td
 
 import pandas as pd
-from numpy import random as rng
 from sqlalchemy_utils.types import ChoiceType, Choice
 
 from Dashboard.extensions import db
@@ -263,10 +262,7 @@ class Tasks(ResourceMixin, db.Model):
 
     @classmethod
     def get_all_undone_tasks(cls, forecast=4):
-        records = (Tasks.query
-                   .filter((Tasks.status == Choice('ready', 'Ready')) &
-                           (Tasks.ready_time <= now() + td(hours=forecast)))
-                   .all())
+        records = Tasks._get_all_undone_tasks_raw(forecast)
         return [t.to_dict() for t in records]
 
     @classmethod
@@ -299,3 +295,10 @@ class Tasks(ResourceMixin, db.Model):
         data = [t.to_dict('stats') for t in Tasks.query.filter(Tasks.status == Choice('done', 'Done')).all()]
         columns = data[0].keys()
         return pd.DataFrame(data, columns=columns)
+
+    @classmethod
+    def _get_all_undone_tasks_raw(cls, forecast=4):
+        return (Tasks.query
+                .filter((Tasks.status == Choice('ready', 'Ready')) &
+                        (Tasks.ready_time <= now() + td(hours=forecast)))
+                .all())

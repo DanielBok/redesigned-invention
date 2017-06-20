@@ -2,6 +2,7 @@ import json
 
 from flask import url_for
 
+from Dashboard.blueprints.api.models import Tasks, Drivers
 from utils.tests_helpers import TestMixin, AssertsMixin
 
 
@@ -11,6 +12,11 @@ class TestViews(TestMixin, AssertsMixin):
         assert response.status_code == 200
 
     def test_dp_api(self):
+        tasks = Tasks._get_all_undone_tasks_raw()
+        for task in tasks:
+            task.do_task(Drivers.get_by_identity("John Smith"))
+            task.complete_task()
+
         response = self.client.get(url_for('stats.driver_performance_data'))
         data = dict(json.loads(response.data.decode('utf-8')))
 
@@ -22,5 +28,11 @@ class TestViews(TestMixin, AssertsMixin):
             assert d in data.keys()
 
     def test_csv(self):
+
+        tasks = Tasks._get_all_undone_tasks_raw()
+        for task in tasks:
+            task.do_task(Drivers.get_by_identity("John Smith"))
+            task.complete_task()
+
         response = self.client.get(url_for('stats.as_csv'))
         assert response.status_code == 200
