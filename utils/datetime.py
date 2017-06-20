@@ -10,5 +10,6 @@ def now():
 
 
 def localize(d: dt):
-    offset = d.replace(tzinfo=timezone(TIMEZONE)).utcoffset().total_seconds()
-    return str(d.replace(tzinfo=timezone(TIMEZONE)) + td(seconds=offset))[:19]
+    # offset = d.replace(tzinfo=timezone(TIMEZONE)).utcoffset().total_seconds()
+    # return str(d.replace(tzinfo=timezone(TIMEZONE)) + td(seconds=offset))[:19]
+    return int(d.timestamp() * 1000)

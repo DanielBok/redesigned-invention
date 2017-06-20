@@ -55,13 +55,9 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
     $scope.editing = false;
 
     let make_tasks_aware_tz = tasks => {
-        let time_now = new Date();
-        let tz_offset = -time_now.getTimezoneOffset() / 60;
-        tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
-
         tasks.forEach(e => {
-            e.flight_time = (new Date(`${e.flight_time}${tz_offset}`)).toGMTString();
-            e.ready_time = (new Date(`${e.ready_time}${tz_offset}`)).toGMTString();
+            e.flight_time = (new Date(e.flight_time)).toGMTString();
+            e.ready_time = (new Date(e.ready_time)).toGMTString();
         })
     };
 
@@ -128,14 +124,12 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
 
     $scope.checkTimings = () => {
         let time_now = new Date();
-        let tz_offset = -time_now.getTimezoneOffset() / 60;
-        tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
-        console.log('time now:', time_now);
-        $scope.tasks.forEach( task => {
+
+        $scope.tasks.forEach(task => {
             let task_time = new Date(task.flight_time);
 
-            let remaining = Math.round((task_time - time_now)/60000);
-            if (remaining < 0){
+            let remaining = Math.round((task_time - time_now) / 60000);
+            if (remaining < 0) {
                 task.flag = -1; // overdue task
             } else if (remaining < 20) {
                 task.flag = 1; // urgent task
