@@ -1,5 +1,5 @@
 // Controller for driver
-app.controller("driverCtrl", ($scope, $http) => {
+app.controller("driverCtrl", ($scope, $http, $interval) => {
     $scope.loading = true;
     $scope.ready = false;
     $scope.name = "";
@@ -30,6 +30,12 @@ app.controller("driverCtrl", ($scope, $http) => {
         }
     );
     //$scope.done = false;
+
+    $interval(function () {
+        console.log("auto refreshed");
+        $scope.refreshTasks();
+    }, 30000);
+    
 
     $scope.setReady = function () {
         if ($scope.ready) {
