@@ -14,7 +14,7 @@ class TestViews(TestMixin, AssertsMixin):
     def test_dp_api(self):
         tasks = Tasks._get_all_undone_tasks_raw()
         for task in tasks:
-            task.do_task(Drivers.get_by_identity("John Smith"))
+            task.do_task("John Smith")
             task.complete_task()
 
         response = self.client.get(url_for('stats.driver_performance_data'))
@@ -31,7 +31,7 @@ class TestViews(TestMixin, AssertsMixin):
 
         tasks = Tasks._get_all_undone_tasks_raw()
         for task in tasks:
-            task.do_task(Drivers.get_by_identity("John Smith"))
+            task.do_task("John Smith")
             task.complete_task()
 
         response = self.client.get(url_for('stats.as_csv'))

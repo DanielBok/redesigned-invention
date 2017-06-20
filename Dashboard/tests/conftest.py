@@ -77,7 +77,10 @@ def tasks(db):
     for t in T_tasks:
         db.session.add(Tasks(**t))
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
 
 @pytest.fixture(scope='function')
@@ -89,4 +92,7 @@ def drivers(db):
     for d in D_drivers:
         db.session.add(Drivers(**d))
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()

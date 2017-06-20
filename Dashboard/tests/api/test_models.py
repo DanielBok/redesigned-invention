@@ -42,7 +42,7 @@ class TestModels(TestMixin, AssertsMixin):
         assert len(tasks) == 0
         task = Tasks.get_first_task()
 
-        task.do_task(Drivers.get_by_identity("John Smith"))
+        task.do_task("John Smith")
         task.complete_task()
 
         tasks = Tasks.get_all_done_tasks()

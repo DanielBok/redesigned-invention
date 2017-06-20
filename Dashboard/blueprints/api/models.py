@@ -87,7 +87,7 @@ class Drivers(ResourceMixin, db.Model):
             return None
         return Tasks.get_task_by_id(self.task_id).to_dict()
 
-    def ready(self, activity: str):
+    def ready(self, activity: str = None):
         self.status = Choice('ready', 'Ready')  # put to ready
 
         if activity == 'complete':
@@ -210,8 +210,8 @@ class Tasks(ResourceMixin, db.Model):
             payload.pop('status')
         return payload
 
-    def do_task(self, driverName: str):
-        self.driver = driverName
+    def do_task(self, driver_name: str):
+        self.driver = driver_name
         self.status = Choice('er', 'En-route')
         self.task_start_time = now()
         return self.save()
@@ -250,11 +250,11 @@ class Tasks(ResourceMixin, db.Model):
             stop = now()
         records = (Tasks.query
                    .filter((Tasks.ready_time >= start) &
-                           (Tasks.ready_time <= stop) #&
-                           #(
+                           (Tasks.ready_time <= stop)  # &
+                           # (
                            #    (Tasks.status == Choice('ready', 'Ready')) |
                            #    (Tasks.status == Choice('er', 'En-route'))
-                           #)
+                           # )
                            )
                    .order_by(Tasks.ready_time)
                    .all())
