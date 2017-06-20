@@ -7,3 +7,7 @@ from configs.settings import TIMEZONE
 
 def now():
     return dt.now(timezone(TIMEZONE))
+
+
+def localize(datetime: dt):
+    return timezone(TIMEZONE).localize(datetime)

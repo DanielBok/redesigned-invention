@@ -5,7 +5,7 @@ import pandas as pd
 from sqlalchemy_utils.types import ChoiceType, Choice
 
 from Dashboard.extensions import db
-from utils.datetime import now
+from utils.datetime import now, localize
 from utils.mixins import ResourceMixin, AwareDateTime
 
 
@@ -36,10 +36,10 @@ class Flights(ResourceMixin, db.Model):
         return {
             'flight_num': self.flight_num,
             'terminal': self.terminal,
-            'scheduled_time': self.scheduled_time,
+            'scheduled_time': localize(self.scheduled_time),
             'type': self.type_.value,
             'containers': self.num_containers,
-            'actual_time': self.actual_time,
+            'actual_time': localize(self.actual_time),
             'bay': self.bay
         }
 
@@ -193,8 +193,8 @@ class Tasks(ResourceMixin, db.Model):
     def to_dict(self, purpose: str = None):
         payload = {
             'task_id': self.id,
-            'ready_time': self.ready_time,
-            'flight_time': self.flight_time,
+            'ready_time': localize(self.ready_time),
+            'flight_time': localize(self.flight_time),
             'status': self.status.value,
             'source': self.source,
             'destination': self.destination,
@@ -250,12 +250,7 @@ class Tasks(ResourceMixin, db.Model):
             stop = now()
         records = (Tasks.query
                    .filter((Tasks.ready_time >= start) &
-                           (Tasks.ready_time <= stop)  # &
-                           # (
-                           #    (Tasks.status == Choice('ready', 'Ready')) |
-                           #    (Tasks.status == Choice('er', 'En-route'))
-                           # )
-                           )
+                           (Tasks.ready_time <= stop))
                    .order_by(Tasks.ready_time)
                    .all())
         return [t.to_dict() for t in records]
