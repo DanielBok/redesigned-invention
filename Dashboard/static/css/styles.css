@@ -20,29 +20,31 @@ main {
 }
 
 #toast-container {
-  top: 10%;
-  right: 7%;
-  bottom: auto !important;
-  left: auto !important;
+    top: 10%;
+    right: 7%;
+    bottom: auto !important;
+    left: auto !important;
 }
 
-.urgent-class{
-  background-color: #ff5252;
-
-}.overdue-class{
-  background-color: #bdbdbd;
+.urgent-class {
+    background-color: #ff5252;
+    color: white;
 }
 
-.ready-class{
-  background-color: #e0f7fa;
+.overdue-class {
+    background-color: #bdbdbd;
 }
 
-.enRoute-class{
-  background-color: #82b1ff;
+.ready-class {
+    background-color: #e0f7fa;
 }
 
-.done-class{
-  background-color: #69f0ae;
+.enRoute-class {
+    background-color: #82b1ff;
+}
+
+.done-class {
+    background-color: #69f0ae;
 }
 
 .footer-nav {

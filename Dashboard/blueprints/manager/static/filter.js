@@ -4,7 +4,7 @@ app.filter("toDateOfArrival", () => (x) => {
 });
 
 app.filter("toJustTime", () => s => {
-    return (new Date(s)).toString().substring(16, 22);
+    return (new Date(s)).toString().substring(16, 21);
 });
 
 app.filter('toLocalTime', () => s => {

@@ -27,7 +27,6 @@ app.controller('fsCtrl', ($scope, $http) => {
     $http.get(api('flights')).then(
         (res) => {
             $scope.schedule = res.data.schedule;
-            console.log($scope.schedule);
 
             res.data.schedule.forEach(e => {
                 e.scheduled_time = (new Date(e.scheduled_time)).toString().substring(0, 21);
@@ -49,21 +48,10 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
     $scope.disableAllocateButton = true;
     $scope.editing = false;
 
-    // let make_tasks_aware_tz = tasks => {
-    //     tasks.forEach(e => {
-    //         e.flight_time = (new Date(e.flight_time)).toString().substring(16, 21);
-    //         e.ready_time = (new Date(e.ready_time)).toString().substring(16, 21);
-    //     })
-    // };
-
     $scope.loadTaskBoard = () => {
 
         $http.get(api('tasks', {type: 'all'})).then(res => {
             $scope.tasks = res.data.tasks;
-            // console.log($scope.tasks);
-            //
-            // make_tasks_aware_tz($scope.tasks);
-            // console.log($scope.tasks);
 
             $scope.checkTimings();
 
