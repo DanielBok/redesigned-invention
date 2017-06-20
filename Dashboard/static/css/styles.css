@@ -19,13 +19,26 @@ main {
     }
 }
 
+#toast-container {
+  top: 10%;
+  right: 7%;
+  bottom: auto !important;
+  left: auto !important;
+}
+
+.urgent-class{
+  background-color: #ff5252;
+
+}.overdue-class{
+  background-color: #bdbdbd;
+}
 
 .ready-class{
   background-color: #e0f7fa;
 }
 
 .enRoute-class{
-  background-color: #64b5f6;
+  background-color: #82b1ff;
 }
 
 .done-class{

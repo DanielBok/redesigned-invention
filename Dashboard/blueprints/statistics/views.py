@@ -21,7 +21,7 @@ def index():
     payload = {
         'title': 'Statistics',
         'page_title': 'Statistics',
-        'page_color': 'lime darken-4'
+        'page_color': 'blue-grey darken-1'
     }
     return render_template('stats/index.html', **payload)
 

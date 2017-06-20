@@ -45,7 +45,7 @@ def login():
                 if role == 'Manager':
                     return redirect(url_for('manager.index'))
                 else:
-                    Drivers.get_by_identity(u.name).ready()
+                    Drivers.get_by_identity(u.name).ready('ready')
                     return redirect(url_for('driver.index'))
         else:
             flash('Username or password does not match', 'error')

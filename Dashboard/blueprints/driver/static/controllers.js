@@ -13,13 +13,15 @@ app.controller("driverCtrl", ($scope, $http) => {
 
     $http.get(api('drivers')).then(
         (res) => {
-            console.log(res);
+            // console.log(res);
             $scope.loading = false;
-            if (res.data.drivers[0].status=='Ready') {
+            if (res.data.drivers[0].status!='Off Work') {
               $scope.ready = true;
-            } else{
+              $scope.refreshTasks();
+            } else {
               $scope.ready = false;
             };
+            $scope.loading = false;
             //console.log(res.data.drivers[0].status)
         },
         (err) => {
@@ -27,8 +29,7 @@ app.controller("driverCtrl", ($scope, $http) => {
             $scope.loading = false;
         }
     );
-    $scope.done = false;
-
+    //$scope.done = false;
 
     $scope.setReady = function() {
         if ($scope.ready){
@@ -38,7 +39,7 @@ app.controller("driverCtrl", ($scope, $http) => {
             };
             $http.post(api('drivers'), payload).then(
               (res) => {
-                  console.log(res);
+                  // console.log(res);
               },
               (err) => {
                   console.error('error', err);
@@ -53,7 +54,7 @@ app.controller("driverCtrl", ($scope, $http) => {
             };
             $http.post(api('drivers'), payload).then(
               (res) => {
-                  console.log(res);
+                  // console.log(res);
                   if (res.data.task == null) {
                       $scope.done = true;
                   } else {
@@ -73,11 +74,11 @@ app.controller("driverCtrl", ($scope, $http) => {
         $scope.loading = true;
         let payload = {
             name: $scope.name,
-            activity: "complete"
+            activity: 'complete'
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
-              console.log(res);
+              // console.log(res);
               if (res.data.task == null){
                   $scope.done = true;
               } else {
@@ -97,11 +98,11 @@ app.controller("driverCtrl", ($scope, $http) => {
         $scope.loading = true;
         let payload = {
             name: $scope.name,
-            activity: "ready"
+            activity: 'get_task'
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
-              console.log(res);
+              // console.log(res);
               if (res.data.task == null){
                   $scope.done = true;
               } else {
