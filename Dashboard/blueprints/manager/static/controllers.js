@@ -30,8 +30,8 @@ app.controller('fsCtrl', ($scope, $http) => {
             console.log($scope.schedule);
 
             res.data.schedule.forEach(e => {
-                e.scheduled_time = (new Date(e.scheduled_time)).toGMTString();
-                e.actual_time = (new Date(e.actual_time)).toGMTString();
+                e.scheduled_time = (new Date(e.scheduled_time)).toString().substring(0, 21);
+                e.actual_time = (new Date(e.actual_time)).toString().substring(0, 21)();
             });
 
             $scope.currentTerminal = true;
@@ -51,8 +51,8 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
 
     let make_tasks_aware_tz = tasks => {
         tasks.forEach(e => {
-            e.flight_time = (new Date(e.flight_time)).toGMTString();
-            e.ready_time = (new Date(e.ready_time)).toGMTString();
+            e.flight_time = (new Date(e.flight_time)).toString().substring(16, 21);
+            e.ready_time = (new Date(e.ready_time)).toString().substring(16, 21);
         })
     };
 
@@ -61,8 +61,6 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
         $http.get(api('tasks', {type: 'all'})).then(res => {
             $scope.tasks = res.data.tasks;
             console.log($scope.tasks);
-            let d = $scope.tasks[0].flight_time;
-            console.log(d, new Date(d));
 
             make_tasks_aware_tz($scope.tasks);
             console.log($scope.tasks);
@@ -73,21 +71,21 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
             console.error("ERROR", err);
         });
 
-        $scope.changeDriver = (newDriver) => {
+        $scope.changeDriver = newDriver => {
             $scope.test = newDriver;
         };
         $scope.loading = false
     };
 
     $scope.deallocate = (task) => {
-        // console.log("deallocate driver: ", task.driver);
+
         $scope.updateDeallocatedDriver = task.driver;
         task.driver = null;
         $scope.disableAllocateButton = false;
     };
 
     $scope.allocate = (task) => {
-        // console.log("allocate driver to: ", task.task_id);
+
         $scope.updateAllocatedTask = task.task_id;
         $scope.disableAllocateButton = true;
         task.driver = $scope.updateDeallocatedDriver;
