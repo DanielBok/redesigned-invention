@@ -4,7 +4,11 @@ app.filter("toDateOfArrival", () => (x) => {
 });
 
 app.filter("toJustTime", () => (s) => {
-    return s.substring(17, 22);
+    return (new Date(s)).toISOString().substring(17, 22);
+});
+
+app.filter('toLocalTime', () => s => {
+    return (new Date(s)).toISOString().substring(0, 22)
 });
 
 app.filter("toID", () => (y) => {
@@ -19,6 +23,6 @@ app.filter("replaceAll", () => (text, search, replacement) => {
 app.filter("removeDriver", () => (list, driver) => {
     var res = list;
     var index = list.indexOf(driver);
-    res.splice(index,1);
+    res.splice(index, 1);
     return
 });
