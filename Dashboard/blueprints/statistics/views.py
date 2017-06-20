@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from os.path import exists
 from time import time
 
@@ -49,6 +50,10 @@ def driver_performance_data():
     data = {}
 
     wd = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
+
+    df.flight_time = df.flight_time.map(lambda x: dt.fromtimestamp(x / 1000))
+    df.ready_time = df.ready_time.map(lambda x: dt.fromtimestamp(x / 1000))
+
     sum_con = df.groupby(df.flight_time.dt.weekday).apply(lambda x: x.containers.sum()).tolist()
     num_weeks = len(df.flight_time.dt.week.unique())
 

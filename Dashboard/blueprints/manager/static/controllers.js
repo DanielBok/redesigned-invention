@@ -64,11 +64,11 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
     $scope.loadTaskBoard = () => {
 
         $http.get(api('tasks', {type: 'all'})).then(res => {
-            let tasks = res.data;
-            $scope.tasks = tasks.tasks;
+            console.log(res);
+            $scope.tasks = res.data.tasks;
             console.log($scope.tasks);
 
-            make_tasks_aware_tz($scope.tasks);
+            // make_tasks_aware_tz($scope.tasks);
             $scope.checkTimings();
 
         }, err => {
