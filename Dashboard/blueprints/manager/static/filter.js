@@ -4,11 +4,11 @@ app.filter("toDateOfArrival", () => (x) => {
 });
 
 app.filter("toJustTime", () => s => {
-    return (new Date(s)).toGMTString().substring(17, 22);
+    return (new Date(s)).toString().substring(16, 22);
 });
 
 app.filter('toLocalTime', () => s => {
-    return (new Date(s)).toGMTString().substring(0, 22)
+    return (new Date(s)).toString().substring(0, 22)
 });
 
 app.filter("toID", () => (y) => {

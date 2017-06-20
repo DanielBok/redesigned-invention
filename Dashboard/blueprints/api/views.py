@@ -36,7 +36,6 @@ class TasksCtrl(Resource):
             tasks = Tasks.get_all_tasks_since(now() - td(hours=0.5), now() + td(hours=1))
         else:
             tasks = Tasks.get_all_undone_tasks()
-        print(tasks)
         return jsonify({
             'tasks': tasks
         })
