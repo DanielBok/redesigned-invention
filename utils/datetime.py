@@ -1,4 +1,4 @@
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta as td
 
 from pytz import timezone
 
@@ -9,5 +9,6 @@ def now():
     return dt.now(timezone(TIMEZONE))
 
 
-def localize(datetime: dt):
-    return timezone(TIMEZONE).localize(datetime)
+def localize(d: dt):
+    offset = d.replace(tzinfo=TIMEZONE).utcoffset().total_seconds()
+    return d.replace(tzinfo=TIMEZONE) + td(seconds=offset)
