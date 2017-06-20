@@ -89,6 +89,9 @@ class Drivers(ResourceMixin, db.Model):
         return Tasks.get_task_by_id(self.task_id).to_dict()
 
     def ready(self, activity: str):
+        if self.status == Choice('on', 'On Task'):
+            # check if the driver has already been assigned.
+            return self.get_task()
         self.status = Choice('ready', 'Ready')  # put to ready
 
         if activity == 'complete':
