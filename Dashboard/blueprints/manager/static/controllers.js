@@ -69,6 +69,7 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
         $http.get(api('tasks', {type: 'all'})).then(res => {
             let tasks = res.data;
             $scope.tasks = tasks.tasks;
+            console.log($scope.tasks);
 
             make_tasks_aware_tz($scope.tasks);
             $scope.checkTimings();
