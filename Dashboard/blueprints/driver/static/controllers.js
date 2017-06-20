@@ -13,7 +13,7 @@ app.controller("driverCtrl", ($scope, $http) => {
 
     $http.get(api('drivers')).then(
         (res) => {
-            console.log(res);
+            // console.log(res);
             $scope.loading = false;
             if (res.data.drivers[0].status!='Off Work') {
               $scope.ready = true;
@@ -21,12 +21,13 @@ app.controller("driverCtrl", ($scope, $http) => {
             } else {
               $scope.ready = false;
             };
+            $scope.loading = false;
             //console.log(res.data.drivers[0].status)
         },
         (err) => {
             console.error('error', err);
+            $scope.loading = false;
         }
-        $scope.loading = false;
     );
     //$scope.done = false;
 
@@ -38,7 +39,7 @@ app.controller("driverCtrl", ($scope, $http) => {
             };
             $http.post(api('drivers'), payload).then(
               (res) => {
-                  console.log(res);
+                  // console.log(res);
               },
               (err) => {
                   console.error('error', err);
@@ -53,7 +54,7 @@ app.controller("driverCtrl", ($scope, $http) => {
             };
             $http.post(api('drivers'), payload).then(
               (res) => {
-                  console.log(res);
+                  // console.log(res);
                   if (res.data.task == null) {
                       $scope.done = true;
                   } else {
@@ -77,7 +78,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
-              console.log(res);
+              // console.log(res);
               if (res.data.task == null){
                   $scope.done = true;
               } else {
@@ -101,7 +102,7 @@ app.controller("driverCtrl", ($scope, $http) => {
         };
         $http.post(api('drivers'), payload).then(
           (res) => {
-              console.log(res);
+              // console.log(res);
               if (res.data.task == null){
                   $scope.done = true;
               } else {
