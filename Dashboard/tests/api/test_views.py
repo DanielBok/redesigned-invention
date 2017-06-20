@@ -132,3 +132,10 @@ class TestViews(TestMixin, AssertsMixin):
 
         assert data['driver']['name'] == payload['name']
         assert data['driver']['status'] == 'Off Work'
+
+    def test_get_all_tasks(self):
+        url = api.url_for(TasksCtrl, type='all')
+        response = self.client.get(url)
+
+        assert response.status_code == 200
+

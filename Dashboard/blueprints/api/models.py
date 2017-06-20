@@ -44,16 +44,16 @@ class Flights(ResourceMixin, db.Model):
             'bay': self.bay
         }
 
-    @classmethod
-    def update_arrival_time(cls):
-        records = Flights.query.filter(
-            ((now() + td(minutes=30) > Flights.scheduled_time) & (now() + td(hours=4) <= Flights.scheduled_time))
-        ).all()
-        noise = rng.normal(0, 5, len(records))
-        for r, n in zip(records, noise):
-            r.time += td(minutes=n)
-            db.session.add(r)
-        db.session.commit()
+    # @classmethod
+    # def update_arrival_time(cls):
+    #     records = Flights.query.filter(
+    #         ((now() + td(minutes=30) > Flights.scheduled_time) & (now() + td(hours=4) <= Flights.scheduled_time))
+    #     ).all()
+    #     noise = rng.normal(0, 5, len(records))
+    #     for r, n in zip(records, noise):
+    #         r.time += td(minutes=n)
+    #         db.session.add(r)
+    #     db.session.commit()
 
     @classmethod
     def get_flight_from_time(cls, start: dt, forecast=4):
