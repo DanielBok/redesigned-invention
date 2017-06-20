@@ -113,7 +113,8 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
         tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
         // console.log('time now:', time_now);
         $scope.tasks.forEach( task => {
-            var task_time = new Date(`${task.flight_time}${tz_offset}`);
+            var task_time = new Date(task.flight_time);
+            // var task_time = new Date(`${task.flight_time}${tz_offset}`);
             var remaining = Math.round((task_time - time_now)/60000);
             if (remaining < 0){
                 task.flag = -1; // overdue task
