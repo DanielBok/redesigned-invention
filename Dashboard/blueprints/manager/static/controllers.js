@@ -26,17 +26,12 @@ app.controller('fsCtrl', ($scope, $http) => {
 
     $http.get(api('flights')).then(
         (res) => {
-
-            let time_now = new Date();
-            let tz_offset = -time_now.getTimezoneOffset() / 60;
-            tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
-
             $scope.schedule = res.data.schedule;
             console.log($scope.schedule);
 
             res.data.schedule.forEach(e => {
-                e.scheduled_time = (new Date(`${e.scheduled_time}${tz_offset}`)).toGMTString();
-                e.actual_time = (new Date(`${e.actual_time}${tz_offset}`)).toGMTString();
+                e.scheduled_time = (new Date(e.scheduled_time)).toGMTString();
+                e.actual_time = (new Date(e.actual_time)).toGMTString();
             });
 
             $scope.currentTerminal = true;
@@ -69,7 +64,9 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
             let d = $scope.tasks[0].flight_time;
             console.log(d, new Date(d));
 
-            // make_tasks_aware_tz($scope.tasks);
+            make_tasks_aware_tz($scope.tasks);
+            console.log($scope.tasks);
+
             $scope.checkTimings();
 
         }, err => {

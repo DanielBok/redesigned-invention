@@ -38,8 +38,8 @@
 
                     <tbody>
                     <tr ng-repeat="flight in schedule" ng-if="flight.terminal === t.value">
-                        <td>[[ flight.scheduled_time | toLocalTime ]]</td>
-                        <td>[[ flight.actual_time | toLocalTime ]]</td>
+                        <td>[[ flight.scheduled_time ]]</td>
+                        <td>[[ flight.actual_time ]]</td>
                         <td>[[ flight.flight_num ]]</td>
                         <td>[[ flight.type == 'A' ? 'Arrival' : 'Departure' ]]</td>
                         <td>[[ flight.terminal ]]</td>
