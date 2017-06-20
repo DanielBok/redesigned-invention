@@ -3,12 +3,12 @@ app.filter("toDateOfArrival", () => (x) => {
     return d.toISOString().replace('T', ' ').substring(0, 19);
 });
 
-app.filter("toJustTime", () => (s) => {
-    return (new Date(s)).toISOString().substring(17, 22);
+app.filter("toJustTime", () => s => {
+    return (new Date(s)).toGMTString().substring(17, 22);
 });
 
 app.filter('toLocalTime', () => s => {
-    return (new Date(s)).toISOString().substring(0, 22)
+    return (new Date(s)).toGMTString().substring(0, 22)
 });
 
 app.filter("toID", () => (y) => {

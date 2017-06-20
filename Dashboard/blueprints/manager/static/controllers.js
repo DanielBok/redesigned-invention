@@ -32,6 +32,7 @@ app.controller('fsCtrl', ($scope, $http) => {
             tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
 
             $scope.schedule = res.data.schedule;
+            console.log($scope.schedule);
 
             res.data.schedule.forEach(e => {
                 e.scheduled_time = (new Date(`${e.scheduled_time}${tz_offset}`)).toGMTString();
