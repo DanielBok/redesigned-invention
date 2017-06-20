@@ -129,7 +129,7 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
         let time_now = new Date();
         let tz_offset = -time_now.getTimezoneOffset() / 60;
         tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
-        // console.log('time now:', time_now);
+        console.log('time now:', time_now);
         $scope.tasks.forEach( task => {
             var task_time = new Date(task.flight_time);
             // var task_time = new Date(`${task.flight_time}${tz_offset}`);
