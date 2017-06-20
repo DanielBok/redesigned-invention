@@ -15,12 +15,12 @@ app.controller("driverCtrl", ($scope, $http) => {
         (res) => {
             // console.log(res);
             $scope.loading = false;
-            if (res.data.drivers[0].status!='Off Work') {
-              $scope.ready = true;
-              $scope.refreshTasks();
+            if (res.data.drivers[0].status !== 'Off Work') {
+                $scope.ready = true;
+                $scope.refreshTasks();
             } else {
-              $scope.ready = false;
-            };
+                $scope.ready = false;
+            }
             $scope.loading = false;
             //console.log(res.data.drivers[0].status)
         },
@@ -31,19 +31,19 @@ app.controller("driverCtrl", ($scope, $http) => {
     );
     //$scope.done = false;
 
-    $scope.setReady = function() {
-        if ($scope.ready){
+    $scope.setReady = function () {
+        if ($scope.ready) {
             let payload = {
                 name: $scope.name,
                 activity: "stop"
             };
             $http.post(api('drivers'), payload).then(
-              (res) => {
-                  // console.log(res);
-              },
-              (err) => {
-                  console.error('error', err);
-              }
+                (res) => {
+                    // console.log(res);
+                },
+                (err) => {
+                    console.error('error', err);
+                }
             );
             $scope.ready = false;
 
@@ -53,21 +53,22 @@ app.controller("driverCtrl", ($scope, $http) => {
                 activity: "start"
             };
             $http.post(api('drivers'), payload).then(
-              (res) => {
-                  // console.log(res);
-                  if (res.data.task == null) {
-                      $scope.done = true;
-                  } else {
-                      $scope.task = res.data.task;
-                      $scope.done = false;
-                  };
-              },
-              (err) => {
-                  console.error('error', err);
-              }
+                (res) => {
+                    // console.log(res);
+                    if (res.data.task === null) {
+                        $scope.done = true;
+                    } else {
+                        $scope.task = res.data.task;
+                        $scope.done = false;
+                    }
+                },
+                (err) => {
+                    console.error('error', err);
+                }
             );
             $scope.ready = true;
-        };
+        }
+
     };
 
     $scope.completeTask = function () {
@@ -77,18 +78,19 @@ app.controller("driverCtrl", ($scope, $http) => {
             activity: 'complete'
         };
         $http.post(api('drivers'), payload).then(
-          (res) => {
-              // console.log(res);
-              if (res.data.task == null){
-                  $scope.done = true;
-              } else {
-                  $scope.task = res.data.task;
-                  $scope.done = false;
-              };
-          },
-          (err) => {
-              console.error('error', err);
-          }
+            (res) => {
+                // console.log(res);
+                if (res.data.task === null) {
+                    $scope.done = true;
+                } else {
+                    $scope.task = res.data.task;
+                    $scope.done = false;
+                }
+
+            },
+            (err) => {
+                console.error('error', err);
+            }
         );
         $scope.loading = false;
         Materialize.toast('Task completed!', 2000)
@@ -101,18 +103,19 @@ app.controller("driverCtrl", ($scope, $http) => {
             activity: 'get_task'
         };
         $http.post(api('drivers'), payload).then(
-          (res) => {
-              // console.log(res);
-              if (res.data.task == null){
-                  $scope.done = true;
-              } else {
-                  $scope.task = res.data.task;
-                  $scope.done = false;
-              };
-          },
-          (err) => {
-              console.error('error', err);
-          }
+            (res) => {
+                // console.log(res);
+                if (res.data.task === null) {
+                    $scope.done = true;
+                } else {
+                    $scope.task = res.data.task;
+                    $scope.done = false;
+                }
+
+            },
+            (err) => {
+                console.error('error', err);
+            }
         );
         $scope.loading = false;
         Materialize.toast('Content refreshed!', 2000)

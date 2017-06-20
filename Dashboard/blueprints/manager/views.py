@@ -40,7 +40,7 @@ def allocation():
         'page_title': 'Allocation',
         'page_color': 'indigo darken-2'
     }
-    return render_template('manager/allocation.html', **payload)
+    return render_template('manager/manpower.html', **payload)
 
 
 @managers.route('/flight-schedules')

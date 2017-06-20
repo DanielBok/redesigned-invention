@@ -1,10 +1,14 @@
 from os import getenv
 from urllib.parse import urljoin
 
+import numpy.random as rng
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
+from sqlalchemy_utils.types import Choice
 
-from Dashboard.blueprints.api.models import Drivers
+from Dashboard.blueprints.api.models import Drivers, Tasks
+from Dashboard.extensions import db
+from utils.datetime import now
 from utils.setup import secret_seed
 from .decorators import anonymous_required
 from .forms import LoginForm
@@ -75,5 +79,49 @@ def secret_route():
     secret_seed()
 
     flash("Seeding is successful", "success")
+
+    return redirect(url_for('.login'))
+
+
+@user.route('/clear-route')
+def clear_route():
+    tasks = (Tasks.query
+             .filter((Tasks.flight_time <= now()) &
+                     (Tasks.status != Choice('done', 'Done')))
+             .all())
+
+    drivers = Drivers.get_all_drivers_names()
+    for task in tasks:
+        if task.driver is None:
+            task.driver = rng.choice(drivers)
+        if task.task_start_time is None:
+            task.task_start_time = now()
+        task.completed_time = now()
+        task.status = Choice('done', 'Done')
+        task.task_time_taken = -1
+        db.session.add(task)
+
+    tasks = (Tasks.query
+             .filter(
+        (
+            (Tasks.ready_time >= now()) &
+            (Tasks.status != Choice('ready', 'Ready'))
+        ) |
+        (
+            (Tasks.flight_time >= now()) &
+            (Tasks.ready_time <= now())
+        )
+    )
+             .all())
+
+    for task in tasks:
+        task.status = Choice('ready', 'Ready')
+        task.driver = None
+        task.task_start_time = None
+        db.session.add(task)
+
+    db.session.commit()
+
+    flash("Clearing is successful", "success")
 
     return redirect(url_for('.login'))

@@ -42,7 +42,7 @@ def driver_performance_data():
         df = pd.read_pickle('s.p')
     else:
         df = Tasks.get_tasks_data()
-        df.to_pickle('s.p')
+        # df.to_pickle('s.p')
 
     drivers = df.driver.unique().tolist()
 
@@ -78,7 +78,7 @@ def as_csv():
         df = pd.read_pickle('s.p')
     else:
         df = Tasks.get_tasks_data()
-        df.to_pickle('s.p')
+        # df.to_pickle('s.p')
 
     csv = df.to_csv(index=False)
 

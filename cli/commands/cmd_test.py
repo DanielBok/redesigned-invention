@@ -31,4 +31,8 @@ def cli(path, cov, pushing):
 
     else:
         subprocess.call(cmd, shell=True)
-    os.remove(get_root_file('.coverage'))
+
+    try:
+        os.remove(get_root_file('.coverage'))
+    except FileNotFoundError:
+        pass

@@ -2,7 +2,6 @@ from collections import defaultdict
 from datetime import datetime as dt, timedelta as td
 
 import pandas as pd
-from numpy import random as rng
 from sqlalchemy_utils.types import ChoiceType, Choice
 
 from Dashboard.extensions import db
@@ -44,16 +43,16 @@ class Flights(ResourceMixin, db.Model):
             'bay': self.bay
         }
 
-    @classmethod
-    def update_arrival_time(cls):
-        records = Flights.query.filter(
-            ((now() + td(minutes=30) > Flights.scheduled_time) & (now() + td(hours=4) <= Flights.scheduled_time))
-        ).all()
-        noise = rng.normal(0, 5, len(records))
-        for r, n in zip(records, noise):
-            r.time += td(minutes=n)
-            db.session.add(r)
-        db.session.commit()
+    # @classmethod
+    # def update_arrival_time(cls):
+    #     records = Flights.query.filter(
+    #         ((now() + td(minutes=30) > Flights.scheduled_time) & (now() + td(hours=4) <= Flights.scheduled_time))
+    #     ).all()
+    #     noise = rng.normal(0, 5, len(records))
+    #     for r, n in zip(records, noise):
+    #         r.time += td(minutes=n)
+    #         db.session.add(r)
+    #     db.session.commit()
 
     @classmethod
     def get_flight_from_time(cls, start: dt, forecast=4):
@@ -88,7 +87,7 @@ class Drivers(ResourceMixin, db.Model):
             return None
         return Tasks.get_task_by_id(self.task_id).to_dict()
 
-    def ready(self, activity: str):
+    def ready(self, activity: str = None):
         self.status = Choice('ready', 'Ready')  # put to ready
 
         if activity == 'complete':
@@ -211,8 +210,8 @@ class Tasks(ResourceMixin, db.Model):
             payload.pop('status')
         return payload
 
-    def do_task(self, driverName: str):
-        self.driver = driverName
+    def do_task(self, driver_name: str):
+        self.driver = driver_name
         self.status = Choice('er', 'En-route')
         self.task_start_time = now()
         return self.save()
@@ -251,11 +250,11 @@ class Tasks(ResourceMixin, db.Model):
             stop = now()
         records = (Tasks.query
                    .filter((Tasks.ready_time >= start) &
-                           (Tasks.ready_time <= stop) #&
-                           #(
+                           (Tasks.ready_time <= stop)  # &
+                           # (
                            #    (Tasks.status == Choice('ready', 'Ready')) |
                            #    (Tasks.status == Choice('er', 'En-route'))
-                           #)
+                           # )
                            )
                    .order_by(Tasks.ready_time)
                    .all())
@@ -263,10 +262,7 @@ class Tasks(ResourceMixin, db.Model):
 
     @classmethod
     def get_all_undone_tasks(cls, forecast=4):
-        records = (Tasks.query
-                   .filter((Tasks.status == Choice('ready', 'Ready')) &
-                           (Tasks.ready_time <= now() + td(hours=forecast)))
-                   .all())
+        records = Tasks._get_all_undone_tasks_raw(forecast)
         return [t.to_dict() for t in records]
 
     @classmethod
@@ -299,3 +295,10 @@ class Tasks(ResourceMixin, db.Model):
         data = [t.to_dict('stats') for t in Tasks.query.filter(Tasks.status == Choice('done', 'Done')).all()]
         columns = data[0].keys()
         return pd.DataFrame(data, columns=columns)
+
+    @classmethod
+    def _get_all_undone_tasks_raw(cls, forecast=4):
+        return (Tasks.query
+                .filter((Tasks.status == Choice('ready', 'Ready')) &
+                        (Tasks.ready_time <= now() + td(hours=forecast)))
+                .all())
