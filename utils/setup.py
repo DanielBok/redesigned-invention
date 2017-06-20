@@ -12,7 +12,7 @@ from Dashboard.blueprints.user.models import User
 from Dashboard.extensions import db
 from configs.settings import SQLALCHEMY_DATABASE_URI
 from utils.extra import ProgressEnumerate
-from .datetime import now
+from .datetime import now, localize
 from .extra import get_app_data_path
 
 
@@ -165,6 +165,9 @@ def _seed_flights_and_task(_db, names: list, days_before: int = None, days_after
 
     mixture = rng.normal(-2.5, 3, len(df)) + rng.normal(2.5, 3, len(df))
     df['actual_time'] = [t + td(minutes=m) for t, m in zip(df.scheduled_time, mixture)]
+
+    df.scheduled_time = df.scheduled_time.map(lambda x: localize(x))
+    df.actual_time = df.actual_time.map(lambda x: localize(x))
 
     otime = now()
     time = otime + td(minutes=1)
