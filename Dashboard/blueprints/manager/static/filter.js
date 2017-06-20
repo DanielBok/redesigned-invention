@@ -8,6 +8,7 @@ app.filter("toJustTime", () => s => {
 });
 
 app.filter('toLocalTime', () => s => {
+    console.log(new Date(s), s);
     return (new Date(s)).toGMTString().substring(0, 22)
 });
 
