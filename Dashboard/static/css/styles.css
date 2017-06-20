@@ -26,6 +26,13 @@ main {
   left: auto !important;
 }
 
+.urgent-class{
+  background-color: #ff5252;
+
+}.overdue-class{
+  background-color: #bdbdbd;
+}
+
 .ready-class{
   background-color: #e0f7fa;
 }

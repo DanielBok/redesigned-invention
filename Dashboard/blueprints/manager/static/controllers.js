@@ -93,27 +93,21 @@ app.controller('fsCtrl', ($scope, $http) => {
 // Controller for taskboard
 app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     $scope.loading = true;
-    let jq = $.noConflict();
     $scope.disableAllocateButton = true;
     $scope.editing = false;
 
     $scope.loadTaskBoard = () => {
 
         console.log("loading taskboard");
-        // Resolve all your promises simultaneously. Previous resolution was asynchronous and led to
-        // concurrency errors
+        // Resolve all your promises simultaneously.
+        // Previous resolution was asynchronous and led to concurrency errors
         $q.all([
             $http.get(api('tasks', {type: 'all'})),
-            //$http.get(api('drivers'))
         ]).then(data => {
             let tasks = data[0].data;
-            //let drivers = data[1].data;
-            console.log("tasks: ", tasks)
-
             $scope.tasks = tasks.tasks;
-            setTimeout(() => jq('select').material_select(), 500);
-
-            //$scope.drivers = drivers.drivers;
+            console.log("tasks: ", $scope.tasks)
+            $scope.checkTimings();
 
         }, err => {
             console.error("ERROR", err);
@@ -162,20 +156,37 @@ app.controller('tbCtrl', ($scope, $http , $interval, $q) => {
     };
 
     $scope.cancel = () => {
-
         $scope.toggleEdit();
         $scope.loadTaskBoard();
+    };
+
+    $scope.checkTimings = () => {
+        var time_now = new Date();
+        let tz_offset = -time_now.getTimezoneOffset() / 60;
+        tz_offset = tz_offset > 0 ? `+0${tz_offset}00` : `-0${tz_offset}00`;
+        console.log('time now:', time_now);
+        $scope.tasks.forEach( task => {
+            var task_time = new Date(`${task.flight_time}${tz_offset}`);
+            var remaining = Math.round((task_time - time_now)/60000);
+            if (remaining < 0){
+                task.flag = -1; // overdue task
+            } else if (remaining < 20) {
+                task.flag = 1; // urgent task
+            } else {
+              task.flag = 0; // normal task
+            };
+        })
     };
 
     $scope.loadTaskBoard(); // first load
 
     $interval(function() {
-      // Call al function only after first load
+      // Call interval function only after first load
     	if (!$scope.editing && !$scope.loading){
     		$scope.loadTaskBoard();
         Materialize.toast('Taskboard refreshed!', 2000)
     	}
-    }, 15000);
+    }, 20000);
 
 });
 

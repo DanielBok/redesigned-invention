@@ -37,7 +37,7 @@
                   </thead>
 
                   <tbody>
-                  <tr ng-repeat="task in tasks" ng-class="{'ready-class': task.status == 'Ready', 'enRoute-class': task.status == 'En-route', 'done-class': task.status == 'Done'}">
+                  <tr ng-repeat="task in tasks" ng-class="{'urgent-class': (task.status == 'Ready' && task.flag > 0), 'overdue-class': (task.status == 'Ready' && task.flag < 0), 'ready-class': (task.status == 'Ready' && task.flag == 0), 'enRoute-class': task.status == 'En-route', 'done-class': task.status == 'Done'}">
                       <td>[[ task.task_id ]]</td>
                       <td>[[ task.source ]]</td>
                       <td>[[ task.destination ]]</td>
@@ -46,7 +46,6 @@
                       <td><div class="grey lighten-5 chip">[[ task.bay ]]</div></td>
                       <td><div class="grey lighten-5 chip">[[ task.containers ]]</div></td>
                       <td>[[ task.driver ]]</td>
-
                       <td ng-show="task.status == 'Ready'" ><div class="teal white-text chip">Ready</div></td>
                       <td ng-show="task.status == 'En-route'"><div class="light-blue darken-1 white-text chip">Enroute</div></td>
                       <td ng-show="task.status == 'Done'" ><div class="green darken-1 white-text chip">Done</div></td>

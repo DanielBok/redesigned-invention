@@ -18,7 +18,7 @@ app.controller("driverCtrl", ($scope, $http) => {
             if (res.data.drivers[0].status!='Off Work') {
               $scope.ready = true;
               $scope.refreshTasks();
-            } else{
+            } else {
               $scope.ready = false;
             };
             //console.log(res.data.drivers[0].status)

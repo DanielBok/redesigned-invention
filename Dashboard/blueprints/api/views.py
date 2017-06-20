@@ -33,7 +33,7 @@ class TasksCtrl(Resource):
     def get(self):
         type_ = request.args.get('type')  # request was too huge
         if type_ == 'all':
-            tasks = Tasks.get_all_tasks_since(now() - td(hours=1), (now() + td(hours=2)))
+            tasks = Tasks.get_all_tasks_since(now() - td(hours=0.5), (now() + td(hours=1)))
         else:
             tasks = Tasks.get_all_undone_tasks()
         return jsonify({
@@ -72,10 +72,10 @@ class DriversCtrl(Resource):
         elif activity in {'update'}:
             new_task_id = data['target']
             d.update_task(new_task_id)
-        
+
         elif activity in {'get_task'}:
             d.get_task()
-        
+
         else:
             return jsonify({
                 'driver': {
