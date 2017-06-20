@@ -47,4 +47,3 @@ class TestModels(TestMixin, AssertsMixin):
 
         tasks = Tasks.get_all_done_tasks()
         assert len(tasks) == 1
-
