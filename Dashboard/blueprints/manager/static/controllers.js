@@ -64,9 +64,10 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
     $scope.loadTaskBoard = () => {
 
         $http.get(api('tasks', {type: 'all'})).then(res => {
-            console.log(res);
             $scope.tasks = res.data.tasks;
             console.log($scope.tasks);
+            let d = $scope.tasks[0].flight_time;
+            console.log(d, new Date(d));
 
             // make_tasks_aware_tz($scope.tasks);
             $scope.checkTimings();
