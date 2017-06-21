@@ -52,6 +52,7 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
 
         $http.get(api('tasks', {type: 'all'})).then(res => {
             $scope.tasks = res.data.tasks;
+            console.log(res)
 
             $scope.checkTimings();
 
@@ -113,13 +114,23 @@ app.controller('tbCtrl', ($scope, $http, $interval, $q) => {
             let task_time = new Date(task.flight_time);
 
             let remaining = Math.round((task_time - time_now) / 60000);
-            if (remaining < 0) {
-                task.flag = -1; // overdue task
-            } else if (remaining < 20) {
-                task.flag = 1; // urgent task
-            } else {
-                task.flag = 0; // normal task
+            if (task.destination.substring(task.destination.length-3, task.destination.length)==='HOT'){
+                // arrival container (no overdue)
+                if (remaining < -20) {
+                    task.flag = 1; //urgent task
+                } else {
+                    task.flag = 0; //normal task
+                }
+            } else { //departure container
+                if (remaining < 0){
+                    task.flag = -1; //overdue task
+                } else if (remaining < 20){
+                    task.flag = 1; //urgent task
+                } else {
+                    task.flag = 0; //normal task
+                }
             }
+
         })
     };
 
