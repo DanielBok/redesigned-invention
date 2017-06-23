@@ -1,39 +1,106 @@
-# Manual
+Pronto Setup Documents
+===
 
-## Conda setup
+<!-- TOC -->
+
+- [Setting up the application](#setting-up-the-application)
+- [Downloading and Installing Conda](#downloading-and-installing-conda)
+- [Checking Installation](#checking-installation)
+- [Setting up the Environment](#setting-up-the-environment)
+- [Installing the External Packages](#installing-the-external-packages)
+- [Running the Development build](#running-the-development-build)
+- [Other Information](#other-information)
+
+<!-- /TOC -->
+
+
+## Setting up the application
+
+Please follow these steps to set up the application.
+
+## Downloading and Installing Conda
+
+Head over to [Conda](https://conda.io/miniconda.html) to download the latest version of Python. Download the Python 3.6 version based on your system. If you're unsure, you'll most likely need the Windows 64-bit version.
+
+Conda is a package manager - in other words - it helps you manage all the background setup tasks related to the external libraries used relative to your system. This makes it simpler to use over the basic Python installation.
+
+During installation, **REMEMBER to check the save conda to path option**.
+
+## Checking Installation
+
+Open your command prompt or terminal and go into the project's root folder. If you're on Windows, you can get the command prompt by:
+
+1. Press \<Windows>+<R>
+2. Type "cmd" into the box
+3. Press \<Enter>
+4. Type `cd PATH/TO/PROJECT/ROOT`
+
+The project root folder is where you'll find this `Readme` document.
+
+All commands that are typed are prepended with a `$` sign. If you installed the application correctly, type the following command. You should see the following output.
 
 ```
-conda create --name <env> --file requirements.txt
+$ conda -V
+conda 4.3.18
 ```
 
-Important to use a common environment when developing to ensure that we are all on the same page
+If the output is not something similar (an error), it is likely because you did not put/install `conda` into path just now.
 
-## Initial Setup
+## Setting up the Environment
+
+After installing conda into your 
 ```
-activate <env>  # windows
-source activate <env>  # mac / linux
+$ conda create --name <env> python=3.5
 
-python run.py -b  # build the local dashboard command
-dashboard db reset  # resets and seed the database
-```
-
-Assuming you're in the environment `<env>` henceforth.
-
-## Running
-```
-python run.py  # runs the application in local debug mode
-dashboard test  # runs unit tests
-dashboard test --cov  # runs unit tests with coverage
+Example:
+$ conda create --name SIA python=3.5
 ```
 
-## Preparing for production
+It is important to use a common environment when developing to ensure that we are all on the same page.
+
+## Installing the External Packages
+
+After creating the environment, we must go into that environment. To do so, type the following into the command prompt
+
 ```
-dashboard setup push_hook  # setup pre-push hook
-dashboard setup freeze  # prints a heroku ready requirements.txt
+Windows
+$ activate <env>
 
-git push <remote> <branch>
+Mac / Linux
+$ source activate <env>
+
+Example
+$ activate SIA
 ```
 
-We set up the `prepush` hook to run all the unit tests before pushing to a cloud repo. This ensures that we don't push up stuff which have errors
+To download all the external libraries that we use, type the following
+```
+$ conda config --append channels conda-forge --append channels anaconda
+$ conda install --file requirements.txt
+```
 
-We also have local packages which heroku cannot install. Thus we use the custom `freeze` command to simplify matters.
+## Running the Development build
+
+Before running the application, you'll need to do some minor setup. If you're running in production, you can skip this step. If you just want a demo version, we'll need to "seed" the database with some data, thus these steps.
+
+```
+$ python run.py -b
+$ dashboard db reset
+```
+The first command creates locally some helper commands. The second command seeds the local database with some data. The second command will take a while to complete as we are pushing quite a lot of data (40Mb).
+
+To run the development version of the application, type
+```
+$ python run.py
+```
+
+## Other Information
+
+The test account credentials are as follows:
+| User    | Username  | Password |
+| :------ | :-------- | :------- |
+| Manager | manager   | airport  |
+| Driver  | driver0   | airport  |
+| Driver  | driver`X` | airport  |
+
+There are around 200 drivers. Thus you can use drivers from **driver0** to **driver199** for driver login.
