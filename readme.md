@@ -24,7 +24,7 @@ Head over to [Conda](https://conda.io/miniconda.html) to download the latest ver
 
 Conda is a package manager - in other words - it helps you manage all the background setup tasks related to the external libraries used relative to your system. This makes it simpler to use over the basic Python installation.
 
-During installation, **REMEMBER to check the save conda to path option**.
+During installation, **REMEMBER to CHECK the `Save Conda to Path` option**.
 
 ## Checking Installation
 
